@@ -35,3 +35,31 @@ A powerful sub-agent command for comprehensive technical research and implementa
 4. **Implementation Planning** - Delivers structured, phased execution plan
 
 The command outputs a detailed plan that the main agent can execute using TODO tracking, ensuring systematic implementation with proper testing and validation at each phase.
+
+### `/refactor-tests`
+
+A hybrid command that analyzes tests against code/criteria and refactors them through phased execution.
+
+**Usage:**
+- `/refactor-tests [module/folder]` - Refactor tests for specified module to align with generated acceptance criteria
+
+**Key Features:**
+- Analyzes existing tests and generates comprehensive acceptance criteria
+- Creates structured refactoring plans with clear phases
+- Prioritizes test readability over reusability (one clear test per situation)
+- Fixes code bugs discovered during test refactoring
+- Handles questions dynamically during execution
+- Saves approved criteria as documentation
+
+**Process:**
+1. **Context Gathering** - Confirms module and analysis sources (code/criteria docs)
+2. **Analysis & Criteria Generation** - Sub-agent analyzes and generates acceptance criteria
+3. **Criteria Approval** - User reviews and approves generated criteria
+4. **Refactoring Plan** - Creates phased plan for test updates
+5. **Phased Execution** - Executes refactoring through TODO-tracked phases
+
+**Philosophy:**
+- Clarity over DRY principles
+- One test per distinct situation
+- Descriptive test names over concise ones
+- Maintains valuable edge case tests

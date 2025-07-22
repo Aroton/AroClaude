@@ -2,8 +2,6 @@
 
 **Purpose**: Research a technical challenge thoroughly and deliver an implementation plan with phased approach and acceptance criteria for main agent execution.
 
-**Execution Type**: SUB-AGENT
-
 ## Usage
 - `/research-implement` - Research and deliver implementation plan for a specified technical challenge
 - `/research-implement [topic]` - Research specific topic and create phased implementation plan
