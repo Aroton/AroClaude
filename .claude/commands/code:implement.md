@@ -1,10 +1,10 @@
-# /research-implement
+# /code:implement
 
 **Purpose**: Research a technical challenge thoroughly and deliver an implementation plan with phased approach and acceptance criteria for main agent execution.
 
 ## Usage
-- `/research-implement` - Research and deliver implementation plan for a specified technical challenge
-- `/research-implement [topic]` - Research specific topic and create phased implementation plan
+- `/code:implement` - Research and deliver implementation plan for a specified technical challenge
+- `/code:implement [topic]` - Research specific topic and create phased implementation plan
 
 ## Critical Rules
 - NEVER output intermediate solutions to preserve tokens
@@ -177,7 +177,7 @@ Each phase execution in task tool must follow this strict order:
    - 2 = Unable to create viable implementation plan
 
 ## Example Interaction Pattern
-User: `/research-implement authentication system upgrade`
+User: `/code:implement authentication system upgrade`
 
 Sub-agent (via task tool):
 1. "I'll research authentication system upgrades. First, let me understand your needs:

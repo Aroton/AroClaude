@@ -1,9 +1,9 @@
-# /refactor-tests
+# /tests:refactor
 
 **Purpose**: Analyze tests against code/criteria, generate updated acceptance criteria, and refactor tests to align with those criteria through phased execution.
 
 ## Usage
-- `/refactor-tests [module/folder]` - Refactor tests for specified module to align with generated acceptance criteria
+- `/tests:refactor [module/folder]` - Refactor tests for specified module to align with generated acceptance criteria
 
 ## Critical Rules
 - ALWAYS require specific module/folder - never allow full codebase scan
@@ -262,18 +262,18 @@ This command fits into the workflow as a test maintenance tool:
 1. **Post-Implementation Test Alignment**
    ```
    /task implement new feature
-   /refactor-tests features/new-feature
+   /tests:refactor features/new-feature
    ```
 
 2. **Pre-Refactor Test Baseline**
    ```
-   /refactor-tests payments/  # Establish clear criteria
+   /tests:refactor payments/  # Establish clear criteria
    /research-implement payment system upgrade
    ```
 
 3. **Test Debt Reduction**
    ```
-   /refactor-tests legacy-module/  # Clean up old tests
+   /tests:refactor legacy-module/  # Clean up old tests
    ```
 
 ## Sub-Agent Instructions
@@ -301,7 +301,7 @@ Task tool sub-agents should:
 - 4 = Questions needed - sub-agent returning control to main agent
 
 ## Example Interaction Pattern
-User: `/refactor-tests auth/`
+User: `/tests:refactor auth/`
 
 Main Agent:
 "I'll help you refactor the tests for the auth/ module. First, I need to understand what to analyze.
