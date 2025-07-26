@@ -45,8 +45,10 @@ Launch up to 10 parallel sub-agents:
    For each test:
    1. Analyze failure reason
    2. Determine fix strategy (test or implementation)
-   3. Apply fix (up to 5 attempts)
-   4. Verify fix works
+   3. Apply fix using appropriate agent:
+      - `@tdd-code-writer` for implementation fixes
+      - `@tdd-test-writer` for test updates
+   4. Verify fix works (up to 5 attempts per test)
 
    Report: Which tests fixed, which need manual review
    ```
@@ -73,15 +75,15 @@ After all sub-agents complete:
    - Import error → Fix module paths or missing dependencies
 
 2. **Determine what to fix**:
-   - If implementation clearly wrong → Fix implementation
-   - If test expects outdated behavior → Update test
+   - If implementation clearly wrong → Use `@tdd-code-writer` to fix implementation
+   - If test expects outdated behavior → Use `@tdd-test-writer` to update test
    - If acceptance criteria provided → Follow those
    - If ambiguous → Analyze test name/description for intent
 
 3. **Apply fix process**:
    - Run the specific test to confirm failure
    - Read relevant test and implementation files
-   - Make targeted fix using appropriate tool
+   - Make targeted fix using appropriate agent (`@tdd-code-writer` for code, `@tdd-test-writer` for tests)
    - Run test again to verify fix
    - If still failing after 5 attempts, document why
 

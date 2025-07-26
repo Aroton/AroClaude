@@ -116,3 +116,40 @@ Analyzes tests against code/criteria and refactors them through phased execution
 - One test per distinct situation
 - Descriptive test names over concise ones
 - Maintains valuable edge case tests
+
+## Agent Color Palette
+
+Agents are categorized by their primary function and assigned colors for visual organization:
+
+| Color | Category | Purpose |
+|-------|----------|---------|  
+| 🟢 **Green** | Authoring Agents | Create and implement code/tests |
+| 🔵 **Blue** | Research Agents | Analyze and document systems |
+| 🟣 **Purple** | Analysis Agents | Review and extract requirements |
+| 🔴 **Red** | *Reserved* | Error handling/critical operations |
+| 🟡 **Yellow** | *Reserved* | Monitoring/alerting systems |
+| 🟠 **Orange** | *Reserved* | Integration/deployment agents |
+| 🩷 **Pink** | *Reserved* | User experience/interface agents |
+| 🩵 **Cyan** | *Reserved* | Data processing/transformation |
+
+## Specialized Agents
+
+The following specialized agents are available to assist with specific development tasks:
+
+### 🟣 `acceptance-criteria-agent` (Analysis)
+Generates, updates, and maintains acceptance criteria documentation based on code changes. Analyzes implementations and creates structured acceptance criteria that remain synchronized with the codebase.
+
+### 🟣 `automated-code-reviewer` (Analysis)
+Performs comprehensive code reviews beyond basic linting, analyzing security patterns, validating against documented standards, and checking for architectural compliance and performance improvements.
+
+### 🔵 `codebase-specialist` (Research)
+Understands, navigates, and analyzes codebase architecture, relationships, and implementation details. Maps system flows, identifies dependencies, and creates persistent knowledge documentation.
+
+### 🟢 `tdd-code-writer` (Authoring)
+Implements code that satisfies tests in a TDD workflow. Analyzes failing tests and implements minimal code needed to make them pass, then refactors for clarity while maintaining test coverage.
+
+### 🟢 `tdd-test-writer` (Authoring)
+Creates comprehensive test suites from acceptance criteria and validates implementations in TDD workflows. Translates acceptance criteria into failing tests that drive development.
+
+### 🔵 `technology-specialist` (Research)
+Discovers production-ready integration patterns and implementation strategies used by industry leaders. Researches battle-tested solutions, analyzes engineering approaches from major tech companies, and provides proven patterns that avoid common pitfalls.

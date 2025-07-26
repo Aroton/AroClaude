@@ -44,6 +44,7 @@
 ### Phase 2: Analysis and Criteria Generation (SUB-AGENT via task tool)
 ```
 /task analyze tests and generate acceptance criteria for [module]
+Use @acceptance-criteria-agent to:
 - Analyze existing tests for current behavior coverage
 - Parse provided criteria docs and/or code files
 - Identify gaps between tests and actual functionality
@@ -84,6 +85,7 @@
 ### Phase 4: Test Refactoring Plan (SUB-AGENT via task tool)
 ```
 /task create test refactoring plan for [module] using approved criteria
+Use @tdd-test-writer to:
 - Map each existing test to new acceptance criteria
 - Identify tests that need updates
 - Find redundant tests to remove
@@ -125,6 +127,7 @@
 For each TODO/phase:
 ```
 /task execute test refactoring phase N for [module]
+Use @tdd-test-writer to:
 - Load specific phase requirements
 - Execute test changes with clear, readable patterns
 - Verify tests pass after changes
@@ -278,20 +281,22 @@ This command fits into the workflow as a test maintenance tool:
 
 ## Sub-Agent Instructions
 Task tool sub-agents should:
-1. During analysis: Build complete test-to-behavior mappings
-2. During planning: Create detailed but executable steps
-3. During execution: Make tests as readable as possible
-4. Always preserve valuable edge case tests
-5. Never sacrifice clarity for brevity
-6. Ensure each test tells a story about the behavior
-7. Fix code bugs when tests reveal implementation doesn't match criteria
-8. Return control with exit code 4 if questions arise:
-   - Ambiguous acceptance criteria interpretation
-   - Code behavior conflicts with test expectations
-   - Unclear whether to maintain backwards compatibility
-   - Design decisions needed for fixes
-9. Save state before returning to enable continuation
-10. Never make assumptions - ask when uncertain
+1. Use `@acceptance-criteria-agent` for all requirements analysis and criteria generation
+2. Use `@tdd-test-writer` for all test planning and refactoring execution
+3. During analysis: Build complete test-to-behavior mappings
+4. During planning: Create detailed but executable steps
+5. During execution: Make tests as readable as possible
+6. Always preserve valuable edge case tests
+7. Never sacrifice clarity for brevity
+8. Ensure each test tells a story about the behavior
+9. Fix code bugs when tests reveal implementation doesn't match criteria
+10. Return control with exit code 4 if questions arise:
+    - Ambiguous acceptance criteria interpretation
+    - Code behavior conflicts with test expectations
+    - Unclear whether to maintain backwards compatibility
+    - Design decisions needed for fixes
+11. Save state before returning to enable continuation
+12. Never make assumptions - ask when uncertain
 
 ## Exit Codes
 - 0 = Test refactoring completed successfully

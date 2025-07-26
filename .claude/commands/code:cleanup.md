@@ -28,7 +28,7 @@
    - Check package.json for deprecated dependencies
    - Track all findings in memory for the session
 
-2. **Usage Analysis**
+2. **Usage Analysis** (use `@codebase-specialist`)
    - For each deprecated item, trace all direct imports/usages
    - Map transitive dependencies (what depends on things that use it)
    - Search for dynamic imports and string-based references
@@ -36,7 +36,7 @@
    - Identify configuration references
    - Build complete dependency graph
 
-3. **Impact Assessment**
+3. **Impact Assessment** (use `@automated-code-reviewer`)
    - Categorize deprecations by risk level
    - Group related deprecations for atomic removal
    - Identify breaking changes vs safe removals
@@ -75,12 +75,14 @@
 
 ## Sub-Agent Instructions
 The task tool sub-agent should:
-1. Execute the complete deprecation cleanup workflow
-2. Keep all findings and progress in memory during session
-3. Use batch processing for related deprecations
-4. Verify each removal doesn't break functionality
-5. Create detailed removal report
-6. Exit with summary of actions taken
+1. Use `@codebase-specialist` for comprehensive dependency analysis and impact assessment
+2. Use `@automated-code-reviewer` to validate removal safety and identify risks
+3. Execute the complete deprecation cleanup workflow
+4. Keep all findings and progress in memory during session
+5. Use batch processing for related deprecations
+6. Verify each removal doesn't break functionality
+7. Create detailed removal report
+8. Exit with summary of actions taken
 
 ## Discovery Patterns
 Common deprecation indicators to search for:

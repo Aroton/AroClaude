@@ -24,7 +24,7 @@
 - NEVER create duplicate test coverage - one test per acceptance criterion
 
 ## Workflow/Process
-1. **Clarification Phase**
+1. **Clarification Phase** (use `@acceptance-criteria-agent`)
    - Ask targeted questions about requirements, constraints, and goals
    - Understand performance requirements, scalability needs, and integration points
    - Identify any technical debt or migration considerations
@@ -33,7 +33,7 @@
    - If no backwards compatibility needed, plan for aggressive code deletion
    - Continue until all ambiguities are resolved
 
-2. **Codebase Analysis**
+2. **Codebase Analysis** (use `@codebase-specialist`)
    - Discover and analyze all relevant existing code
    - Map current architecture and patterns
    - Identify integration points and dependencies
@@ -42,7 +42,7 @@
    - **Analyze existing test coverage and test patterns**
    - Identify code that can be deleted if no backwards compatibility
 
-3. **Silent Solution Generation**
+3. **Silent Solution Generation** (use `@technology-specialist`)
    - Generate at least 20 distinct solution approaches in memory
    - Consider various architectural patterns
    - Evaluate different technology choices
@@ -83,16 +83,19 @@
 
 ## Sub-Agent Instructions
 The task tool sub-agent should:
-1. Lead the research and planning process
-2. Keep all clarification context in memory during the session
-3. Use efficient analysis patterns to minimize token usage
-4. Keep internal deliberations truly internal
-5. Present only refined, actionable output to the user
-6. Always clarify backwards compatibility requirements
-7. Analyze existing test coverage during codebase review
-8. Plan for test reuse and updates before new test creation
-9. Deliver structured implementation plan and exit
-10. NOT begin implementation - that's the main agent's role
+1. Use `@acceptance-criteria-agent` for requirements clarification and criteria generation
+2. Use `@codebase-specialist` for comprehensive codebase analysis and architecture mapping
+3. Use `@technology-specialist` for researching solution approaches and technology choices
+4. Lead the research and planning process
+5. Keep all clarification context in memory during the session
+6. Use efficient analysis patterns to minimize token usage
+7. Keep internal deliberations truly internal
+8. Present only refined, actionable output to the user
+9. Always clarify backwards compatibility requirements
+10. Analyze existing test coverage during codebase review
+11. Plan for test reuse and updates before new test creation
+12. Deliver structured implementation plan and exit
+13. NOT begin implementation - that's the main agent's role
 
 ## Implementation Plan Structure
 Each plan must include:
