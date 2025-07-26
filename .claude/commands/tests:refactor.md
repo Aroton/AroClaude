@@ -4,9 +4,12 @@
 
 ## Usage
 - `/tests:refactor [module/folder]` - Refactor tests for specified module to align with generated acceptance criteria
+- `/tests:refactor` - Auto-detect changes by comparing current branch to main and refactor affected modules
 
 ## Critical Rules
-- ALWAYS require specific module/folder - never allow full codebase scan
+- IF no module specified: Compare current branch to main to identify changed modules
+- ALWAYS require specific scope - either user-provided or auto-detected from git diff
+- NEVER allow full codebase scan without change detection
 - ALWAYS gather all context before starting task tool execution
 - ALWAYS get user approval for generated acceptance criteria
 - ALWAYS save approved criteria to `/documentation/acceptance-criteria/[module]/[criteria-set-name].md`
@@ -23,7 +26,11 @@
 
 ### Phase 1: Context Gathering (Main Agent)
 1. **Module Specification**
-   - Confirm target module/folder path
+   - IF module/folder provided: Confirm target module/folder path
+   - IF no module provided: Run `git diff main...HEAD --name-only` to detect changed files
+     - Extract module/folder patterns from changed files
+     - Present detected modules to user for confirmation
+     - Allow user to select specific modules or include all detected
    - Validate module exists and contains tests
    - Identify test file patterns and structure
 
@@ -305,7 +312,9 @@ Task tool sub-agents should:
 - 3 = User cancelled during criteria approval
 - 4 = Questions needed - sub-agent returning control to main agent
 
-## Example Interaction Pattern
+## Example Interaction Patterns
+
+### Pattern 1: Specific Module
 User: `/tests:refactor auth/`
 
 Main Agent:
@@ -418,9 +427,41 @@ Main Agent:
 
 [Sub-agent resumes with provided answers]
 
+### Pattern 2: Auto-Detection from Git Changes
+User: `/tests:refactor`
+
+Main Agent:
+"I'll analyze the current branch changes to identify modules that need test refactoring.
+
+Comparing current branch to main..."
+[Runs git diff main...HEAD --name-only]
+
+"I found changes in these modules:
+1. auth/ (3 files changed: oauth.js, session.js, middleware.js)
+2. payments/ (2 files changed: stripe.js, validation.js)
+3. notifications/ (1 file changed: email.js)
+
+Which modules would you like to refactor tests for?
+- Type 'all' to refactor all detected modules
+- Type module numbers: '1,3' to refactor auth/ and notifications/
+- Type specific paths: 'auth/oauth payments/stripe' for granular control"
+
+User: "1,2"
+
+Main Agent:
+"Perfect! I'll refactor tests for auth/ and payments/ modules.
+
+For each module, what should I analyze to generate acceptance criteria?
+1. Existing acceptance criteria documents (provide paths)
+2. Current code implementation (provide paths)  
+3. Both criteria docs and code files"
+
+[Continues with normal workflow for each selected module]
+
 ## Notes
 - Balances automation with user control at critical decision points
-- Enforces module-scoped work to prevent context overflow
+- Enforces module-scoped work to prevent context overflow, with auto-detection for convenience
 - Creates audit trail via saved acceptance criteria
 - Supports our "test readability over DRY" philosophy
 - Integrates smoothly with existing TODO-based workflow
+- Auto-detects changes to focus refactoring efforts on modified code

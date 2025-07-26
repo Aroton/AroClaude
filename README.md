@@ -15,12 +15,38 @@ This script copies all configuration files from `.claude/` to your `~/.claude/` 
 
 | Command | Purpose | Type |
 |---------|---------|------|
+| [`/code:analyze`](#codeanalyze) | Analyze code changes to update documentation | Documentation |
 | [`/code:cleanup`](#codecleanup) | Remove deprecated code and unused dependencies | Code Maintenance |
 | [`/code:implement`](#codeimplement) | Research and plan technical implementations | Development Planning |
+| [`/code:review`](#codereview) | Comprehensive code review with specialized agents | Code Quality |
 | [`/tests:fix`](#testsfix) | Automatically repair failing tests | Test Automation |
 | [`/tests:refactor`](#testsrefactor) | Refactor tests with acceptance criteria | Test Quality |
 
 ## Available Commands
+
+### `/code:analyze`
+
+Analyzes code changes or entire codebase to automatically update acceptance criteria and codebase documentation using specialized agents.
+
+**Usage:**
+- `/code:analyze` - Analyze changes in current branch (or entire codebase if on main)
+- `/code:analyze [branch]` - Analyze changes in specified branch
+- `/code:analyze [commit-hash]` - Analyze changes in specific commit
+- `/code:analyze --from [ref1] --to [ref2]` - Analyze changes between two references
+
+**Key Features:**
+- Delegates to specialized agents (acceptance-criteria-agent and codebase-specialist)  
+- Batches files for efficient analysis (50-100 files per batch)
+- Analyzes entire codebase when on main branch
+- Focuses on changes when on feature branches
+- Never filters files by extension - lets agents determine relevance
+- Provides comprehensive summaries from both agents
+
+**Process:**
+1. **Scope Determination** - Identifies whether to analyze entire codebase or specific changes
+2. **File Collection** - Gathers all relevant files using git commands
+3. **Agent Delegation** - Sends batches to acceptance-criteria-agent and codebase-specialist
+4. **Summary Compilation** - Provides comprehensive analysis results
 
 ### `/code:cleanup`
 
@@ -67,6 +93,39 @@ Research-focused command that analyzes technical challenges and delivers structu
 
 The command outputs a detailed plan that the main agent can execute using TODO tracking, ensuring systematic implementation with proper testing and validation at each phase.
 
+### `/code:review`
+
+Performs comprehensive code review of changes or entire codebase using specialized agents for security, quality, and best practices analysis.
+
+**Usage:**
+- `/code:review` - Review changes in current branch (or entire codebase if on main)
+- `/code:review [branch]` - Review changes in specified branch
+- `/code:review [commit-hash]` - Review changes in specific commit
+- `/code:review --from [ref1] --to [ref2]` - Review changes between two references
+- `/code:review [file-path]` - Review specific file or directory
+
+**Key Features:**
+- Multi-agent review (automated-code-reviewer and codebase-specialist)
+- Comprehensive security vulnerability assessment
+- Code quality and performance analysis
+- Architecture review and technical debt assessment
+- Risk categorization (High/Medium/Low)
+- Batch processing for large codebases
+- Never skips files based on extension
+
+**Process:**
+1. **Scope Determination** - Identifies review boundaries (entire codebase vs changes)
+2. **File Collection** - Gathers all relevant files using git commands
+3. **Agent Delegation** - Distributes batches to specialized review agents
+4. **Security Assessment** - Dedicated security analysis for critical issues
+5. **Summary Compilation** - Provides comprehensive review with risk assessment
+
+**Review Categories:**
+- Security vulnerabilities and authentication flaws
+- Code quality, performance, and maintainability
+- Architecture patterns and technical debt
+- Test coverage and quality assessment
+
 ### `/tests:fix`
 
 Automatically fixes failing tests by analyzing failures and repairing either test code or implementation code.
@@ -95,8 +154,10 @@ Analyzes tests against code/criteria and refactors them through phased execution
 
 **Usage:**
 - `/tests:refactor [module/folder]` - Refactor tests for specified module to align with generated acceptance criteria
+- `/tests:refactor` - Auto-detect changes by comparing current branch to main and refactor affected modules
 
 **Key Features:**
+- Auto-detects changed modules when no specific module provided
 - Analyzes existing tests and generates comprehensive acceptance criteria
 - Creates structured refactoring plans with clear phases
 - Prioritizes test readability over reusability (one clear test per situation)
@@ -105,7 +166,7 @@ Analyzes tests against code/criteria and refactors them through phased execution
 - Saves approved criteria as documentation
 
 **Process:**
-1. **Context Gathering** - Confirms module and analysis sources (code/criteria docs)
+1. **Context Gathering** - Confirms module (or auto-detects from git diff) and analysis sources (code/criteria docs)
 2. **Analysis & Criteria Generation** - Sub-agent analyzes and generates acceptance criteria
 3. **Criteria Approval** - User reviews and approves generated criteria
 4. **Refactoring Plan** - Creates phased plan for test updates
