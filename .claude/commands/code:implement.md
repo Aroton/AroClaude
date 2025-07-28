@@ -9,7 +9,7 @@
 ## Critical Rules
 - NEVER output intermediate solutions to preserve tokens
 - ALWAYS analyze at least 20 different approaches internally before proposing
-- ALWAYS use task tool for entire workflow to maximize token efficiency
+- ALWAYS use specialized sub-agents for each phase of the workflow
 - NEVER skip the clarifying questions phase
 - ALWAYS analyze existing codebase before proposing solutions
 - NEVER propose without understanding the full context and constraints
@@ -24,7 +24,7 @@
 - NEVER create duplicate test coverage - one test per acceptance criterion
 
 ## Workflow/Process
-1. **Clarification Phase** (use `@acceptance-criteria-agent`)
+1. **Clarification Phase** (use `acceptance-criteria-agent`)
    - Ask targeted questions about requirements, constraints, and goals
    - Understand performance requirements, scalability needs, and integration points
    - Identify any technical debt or migration considerations
@@ -33,7 +33,8 @@
    - If no backwards compatibility needed, plan for aggressive code deletion
    - Continue until all ambiguities are resolved
 
-2. **Codebase Analysis** (use `@codebase-specialist`)
+2. **Codebase Analysis** (use `codebase-specialist`)
+   - First check `documentation/agents/codebase-specialist/` for existing analysis
    - Discover and analyze all relevant existing code
    - Map current architecture and patterns
    - Identify integration points and dependencies
@@ -41,8 +42,9 @@
    - Document technical constraints from current implementation
    - **Analyze existing test coverage and test patterns**
    - Identify code that can be deleted if no backwards compatibility
+   - Update codebase-specialist knowledge base with new findings
 
-3. **Silent Solution Generation** (use `@technology-specialist`)
+3. **Silent Solution Generation** (use `technology-specialist`)
    - Generate at least 20 distinct solution approaches in memory
    - Consider various architectural patterns
    - Evaluate different technology choices
@@ -82,10 +84,10 @@
 - If token limit approached: Summarize findings and offer to continue
 
 ## Sub-Agent Instructions
-The task tool sub-agent should:
-1. Use `@acceptance-criteria-agent` for requirements clarification and criteria generation
-2. Use `@codebase-specialist` for comprehensive codebase analysis and architecture mapping
-3. Use `@technology-specialist` for researching solution approaches and technology choices
+When executing this command:
+1. Use `acceptance-criteria-agent` for requirements clarification and criteria generation
+2. Use `codebase-specialist` for comprehensive codebase analysis and architecture mapping
+3. Use `technology-specialist` for researching solution approaches and technology choices
 4. Lead the research and planning process
 5. Keep all clarification context in memory during the session
 6. Use efficient analysis patterns to minimize token usage
@@ -96,6 +98,8 @@ The task tool sub-agent should:
 11. Plan for test reuse and updates before new test creation
 12. Deliver structured implementation plan and exit
 13. NOT begin implementation - that's the main agent's role
+14. CRITICAL: During phase execution, MUST use codebase-specialist to find ALL existing test files before creating any new tests
+15. NEVER create one-off test files - always extend existing test suites
 
 ## Implementation Plan Structure
 Each plan must include:
@@ -116,8 +120,8 @@ Each plan must include:
 ## Main Agent Handoff
 After receiving the implementation plan, the main agent will:
 1. Create TODOs for each phase using the TODO tool
-2. Execute phases sequentially using task tool
-3. Task tool analyzes and updates existing tests before writing new ones
+2. Execute phases sequentially using appropriate sub-agents
+3. Analyze and update existing tests before writing new ones
 4. Verify acceptance criteria before marking phase complete
 5. Never proceed to next phase until current phase passes all tests
 
@@ -126,12 +130,18 @@ Each phase execution in task tool must follow this strict order:
 1. **Plan Code Organization** - Design file structure, module boundaries, and test organization first
 2. **Define Acceptance Criteria** - Specify measurable success conditions
 3. **Analyze Existing Tests**
-   - Discover all tests related to the affected code
+   - CRITICAL: Use codebase-specialist to discover ALL test files first
+   - Map which modules already have test coverage
+   - Document test file locations for reuse
+   - Flag any one-off test files that should be consolidated
    - Evaluate if they meet the new acceptance criteria
    - Identify redundant or overlapping test coverage
    - Identify gaps between existing tests and acceptance criteria
 4. **Update or Write Tests**
+   - MUST analyze test coverage overlap before creating ANY new test
    - PRIORITIZE updating existing tests to meet new criteria
+   - MUST consolidate tests when implementing new features
+   - Only create new test file if NO existing test file covers the module
    - Consolidate redundant tests when found
    - Only add new tests when existing tests cannot be adapted
    - Ensure all acceptance criteria have test coverage
@@ -140,11 +150,19 @@ Each phase execution in task tool must follow this strict order:
 
 **CRITICAL**: Tests must exist before implementation begins. Prefer modifying existing tests over creating new ones to avoid test bloat. This approach ensures we understand current behavior before changing it and maintain a lean test suite.
 
-## Token Optimization Strategies
-- Batch file reads when analyzing codebase
-- Use pattern matching to identify relevant code quickly
-- Group test file analysis by directory to minimize reads
-- Summarize findings internally before outputting
+## TDD Enforcement
+The Red-Green-Refactor cycle MUST be strictly followed:
+1. **RED**: Write/update tests that fail for the new requirements (tdd-test-writer)
+2. **GREEN**: Write minimal implementation to make tests pass (tdd-code-writer)
+3. **REFACTOR**: Improve code while keeping all tests green
+
+The tdd-code-writer agent REQUIRES failing tests before implementation. NEVER write implementation code without failing tests that define the expected behavior.
+
+## Agent Coordination
+- Use acceptance-criteria-agent for initial requirements gathering
+- Use codebase-specialist for thorough code analysis
+- Use technology-specialist for solution research
+- Coordinate findings from all agents to create comprehensive plan
 - Keep clarifying questions concise and targeted
 - Output only the final proposal, not the journey
 
@@ -182,7 +200,7 @@ Each phase execution in task tool must follow this strict order:
 ## Example Interaction Pattern
 User: `/code:implement authentication system upgrade`
 
-Sub-agent (via task tool):
+Response:
 1. "I'll research authentication system upgrades. First, let me understand your needs:
    - What authentication methods do you currently support?
    - What new capabilities are required?
@@ -244,17 +262,35 @@ Sub-agent (via task tool):
      * Rollback tested and documented
    - Testing: Extend migration tests + add rollback tests"
 
-[Sub-agent exits, main agent takes over for implementation]
+[Main agent takes over for implementation]
+
+## Anti-Pattern Prevention
+NEVER create test files like:
+- test_feature_X.py (one-off test for single feature)
+- feature_X_test.js (isolated test file)
+- new_functionality_test.rb (separate test for new code)
+
+ALWAYS update existing test files:
+- tests/module_test.py (add new test cases to existing module tests)
+- __tests__/module.test.js (extend existing test suite)
+- spec/module_spec.rb (consolidate tests in existing spec)
+
+Before writing ANY test:
+1. Search for existing test files covering the module
+2. If found, ADD test cases to existing file
+3. If multiple test files exist, CONSOLIDATE them
+4. Only create new test file if module has ZERO test coverage
 
 ## Notes
 - This command prioritizes depth over speed
 - Best for complex technical decisions requiring thorough analysis
-- Token efficiency achieved through task tool delegation
+- Efficiency achieved through specialized sub-agent delegation
 - Internal solution generation ensures comprehensive coverage
 - Final output is a structured plan, not an implementation
 - Designed for handoff to main agent's TODO-based workflow
-- Main agent manages phased implementation via task tool
+- Main agent manages phased implementation via specialized sub-agents
 - Each phase must pass acceptance criteria before proceeding
 - Implementation follows strict test-first development approach
 - Aggressive code deletion when backwards compatibility not required
 - Test reuse prioritized to maintain clean, efficient test suites
+- Test consolidation prevents file proliferation and maintains clarity

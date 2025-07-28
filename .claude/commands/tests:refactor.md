@@ -12,7 +12,9 @@
 - NEVER allow full codebase scan without change detection
 - ALWAYS gather all context before starting task tool execution
 - ALWAYS get user approval for generated acceptance criteria
-- ALWAYS save approved criteria to `/documentation/acceptance-criteria/[module]/[criteria-set-name].md`
+- ALWAYS save approved criteria to `/documentation/agents/acceptance-criteria/[module]/[criteria-set-name].md`
+- ALWAYS update `/documentation/agents/acceptance-criteria/index.md` with new criteria entries
+- ALWAYS check for existing criteria for the module before generating new ones
 - ALWAYS create TODOs for each refactoring phase
 - ALWAYS complete each phase before proceeding to next
 - ALWAYS prioritize test readability over reusability
@@ -86,7 +88,14 @@ Use @acceptance-criteria-agent to:
    - Iterate until user approves
 
 3. **Save Approved Criteria**
-   - Create `/documentation/acceptance-criteria/[module]/[criteria-set-name].md`
+   - Check if `/documentation/agents/acceptance-criteria/[module]/` has existing criteria
+   - If exists, prompt user: "Found existing criteria: [list]. Update existing or create new?"
+   - Create or update `/documentation/agents/acceptance-criteria/[module]/[criteria-set-name].md`
+   - Update `/documentation/agents/acceptance-criteria/index.md` with entry:
+     ```markdown
+     ## [Module]
+     - [criteria-set-name.md] - [Brief description] (Updated: [date])
+     ```
    - Format with clear structure and traceability
 
 ### Phase 4: Test Refactoring Plan (SUB-AGENT via task tool)
@@ -366,7 +375,7 @@ User: "Yes, but add criteria for concurrent token refresh handling"
 [Main Agent updates criteria and saves to documentation]
 
 Main Agent:
-"I've saved the approved criteria to `/documentation/acceptance-criteria/auth/oauth-2025-criteria.md`
+"I've saved the approved criteria to `/documentation/agents/acceptance-criteria/auth/oauth-2025-criteria.md`
 
 Now I'll analyze how to refactor the existing tests to align with these criteria."
 
@@ -453,7 +462,7 @@ Main Agent:
 
 For each module, what should I analyze to generate acceptance criteria?
 1. Existing acceptance criteria documents (provide paths)
-2. Current code implementation (provide paths)  
+2. Current code implementation (provide paths)
 3. Both criteria docs and code files"
 
 [Continues with normal workflow for each selected module]

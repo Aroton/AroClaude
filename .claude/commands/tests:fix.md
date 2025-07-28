@@ -83,7 +83,10 @@ After all sub-agents complete:
 3. **Apply fix process**:
    - Run the specific test to confirm failure
    - Read relevant test and implementation files
+   - **Check for similar tests that might have the same issue**
+   - **Analyze if test can be consolidated with existing tests**
    - Make targeted fix using appropriate agent (`@tdd-code-writer` for code, `@tdd-test-writer` for tests)
+   - If updating test, check if it duplicates existing test coverage
    - Run test again to verify fix
    - If still failing after 5 attempts, document why
 

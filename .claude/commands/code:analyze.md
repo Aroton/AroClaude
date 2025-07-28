@@ -40,21 +40,35 @@
 For each batch of files, tell both agents:
 
 **To @acceptance-criteria-agent:**
-"Please analyze these [count] files and create or update acceptance criteria documentation as needed. Provide a summary of:
+"Please analyze these [count] files and create or update acceptance criteria documentation as needed.
+IMPORTANT:
+- First check `/documentation/agents/acceptance-criteria/index.md` for existing criteria
+- Update existing criteria files when found, don't create duplicates
+- Keep files small and focused on single features/modules
+
+Provide a summary of:
 - Number of files that had relevant acceptance criteria
 - Key features or behaviors documented
 - Any new acceptance criteria files created
 - Any existing criteria files updated
+- Updates made to the criteria index
 
 Files to analyze:
 [list of files]"
 
 **To @codebase-specialist:**
-"Please analyze these [count] files and update the codebase documentation (architecture, components, flows, dependencies) as needed. Provide a summary of:
+"Please analyze these [count] files and update the codebase documentation (architecture, components, flows, dependencies) as needed.
+IMPORTANT:
+- Check your existing knowledge base before analyzing
+- Update existing documentation rather than creating duplicates
+- Keep documentation focused and well-organized
+
+Provide a summary of:
 - Architecture insights discovered
 - Components documented or updated
 - Key patterns or flows identified
 - Documentation files created or updated
+- Knowledge base sections updated
 
 Files to analyze:
 [list of files]"

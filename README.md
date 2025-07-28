@@ -17,6 +17,7 @@ This script copies all configuration files from `.claude/` to your `~/.claude/` 
 |---------|---------|------|
 | [`/code:analyze`](#codeanalyze) | Analyze code changes to update documentation | Documentation |
 | [`/code:cleanup`](#codecleanup) | Remove deprecated code and unused dependencies | Code Maintenance |
+| [`/code:fix`](#codefix) | Diagnose and fix bugs through test-driven approach | Bug Fixing |
 | [`/code:implement`](#codeimplement) | Research and plan technical implementations | Development Planning |
 | [`/code:review`](#codereview) | Comprehensive code review with specialized agents | Code Quality |
 | [`/tests:fix`](#testsfix) | Automatically repair failing tests | Test Automation |
@@ -69,6 +70,35 @@ Systematically discovers and removes deprecated code and unused dependencies fro
 2. **Usage Analysis** - Maps all dependencies and references
 3. **Impact Assessment** - Categorizes risks and removal order
 4. **Incremental Cleanup** - Removes code in dependency order with test validation
+
+### `/code:fix`
+
+Diagnoses and fixes errors or bugs through systematic analysis, root cause identification, and test-driven fixes.
+
+**Usage:**
+- `/code:fix` - Fix a specified error or bug with comprehensive analysis
+- `/code:fix [error description]` - Fix specific error or bug with test-driven approach
+
+**Key Features:**
+- Systematic root cause analysis using specialized agents
+- Mandatory test-first approach (Red-Green-Refactor cycle)
+- Comprehensive error reproduction before fixing
+- Automated regression prevention through test coverage
+- Cross-checking for similar bugs in related code
+- Detailed fix documentation for team learning
+
+**Process:**
+1. **Error Analysis** - Gather complete error details and reproduction steps
+2. **Root Cause Investigation** - Trace error through codebase to identify true cause
+3. **Test Creation** - Write failing test that reproduces the bug
+4. **Fix Implementation** - Implement minimal fix to make tests pass
+5. **Verification** - Run full test suite and check for regressions
+
+**TDD Enforcement:**
+- Tests MUST fail before any fix is written
+- Fix addresses root cause, not symptoms
+- All fixes include regression tests
+- No debug scripts - issues reproduced through proper tests
 
 ### `/code:implement`
 
@@ -189,7 +219,7 @@ Agents are categorized by their primary function and assigned colors for visual 
 | 🟣 **Purple** | Analysis Agents | Review and extract requirements |
 | 🔴 **Red** | *Reserved* | Error handling/critical operations |
 | 🟡 **Yellow** | *Reserved* | Monitoring/alerting systems |
-| 🟠 **Orange** | *Reserved* | Integration/deployment agents |
+| 🟠 **Orange** | Planning/Architecture Agents | Design implementations and system architecture |
 | 🩷 **Pink** | *Reserved* | User experience/interface agents |
 | 🩵 **Cyan** | *Reserved* | Data processing/transformation |
 
@@ -198,19 +228,199 @@ Agents are categorized by their primary function and assigned colors for visual 
 The following specialized agents are available to assist with specific development tasks:
 
 ### 🟣 `acceptance-criteria-agent` (Analysis)
-Generates, updates, and maintains acceptance criteria documentation based on code changes. Analyzes implementations and creates structured acceptance criteria that remain synchronized with the codebase.
+**Purpose**: Generates, updates, and maintains acceptance criteria documentation based on code changes. Analyzes implementations and creates structured acceptance criteria that remain synchronized with the codebase.
+
+**Key Capabilities**:
+- Extracts testable requirements from code implementations
+- Documents acceptance criteria in Given-When-Then format
+- Maintains criteria files in `documentation/agents/acceptance-criteria/`
+- Updates existing criteria rather than creating duplicates
+- Captures edge cases, validation rules, and business logic
+
+**Usage Examples**:
+- Planning new features: "What should I consider for a user notification system?"
+- Clarifying vague requirements: "What does 'better search functionality' mean?"
+- Documenting existing code: "This code has no requirements documentation"
 
 ### 🟣 `automated-code-reviewer` (Analysis)
-Performs comprehensive code reviews beyond basic linting, analyzing security patterns, validating against documented standards, and checking for architectural compliance and performance improvements.
+**Purpose**: Performs comprehensive code reviews beyond basic linting, analyzing security patterns, validating against documented standards, and checking for architectural compliance and performance improvements.
+
+**Key Capabilities**:
+- Security vulnerability analysis (OWASP guidelines, injection attacks, etc.)
+- Performance evaluation and optimization suggestions
+- Code quality assessment (SOLID principles, complexity metrics)
+- Architectural compliance validation
+- Integration with MCP-connected tools for real-time insights
+- Categorized feedback (Critical, Major, Minor, Positive)
+
+**Usage Examples**:
+- Pre-merge reviews: "Review my user management feature implementation"
+- Security audits: "Check this API endpoint for security vulnerabilities"
+- Performance validation: "Did my refactoring improve performance?"
 
 ### 🔵 `codebase-specialist` (Research)
-Understands, navigates, and analyzes codebase architecture, relationships, and implementation details. Maps system flows, identifies dependencies, and creates persistent knowledge documentation.
+**Purpose**: Understands, navigates, and analyzes codebase architecture, relationships, and implementation details. Maps system flows, identifies dependencies, and creates persistent knowledge documentation.
+
+**Key Capabilities**:
+- Complete call trace analysis with file:line references
+- Type relationship mapping and dependency graphs
+- Function signature analysis with usage patterns
+- Real-time code analysis using MCP/IDE tools when available
+- Architectural documentation in `documentation/agents/architecture/`
+- Side effect and state modification tracking
+
+**Usage Examples**:
+- Debugging: "Trace where this error originates in the codebase"
+- Understanding features: "How does the payment processing work?"
+- Impact analysis: "What would break if I change this API?"
 
 ### 🟢 `tdd-code-writer` (Authoring)
-Implements code that satisfies tests in a TDD workflow. Analyzes failing tests and implements minimal code needed to make them pass, then refactors for clarity while maintaining test coverage.
+**Purpose**: Implements code that satisfies tests in a TDD workflow. Analyzes failing tests and implements minimal code needed to make them pass, then refactors for clarity while maintaining test coverage.
+
+**Key Capabilities**:
+- Red-Green-Refactor cycle implementation
+- Test failure analysis and requirement extraction
+- Minimal implementation to pass tests
+- Code refactoring while maintaining green tests
+- Error handling based on test requirements
+- Clean, self-documenting code practices
+
+**Usage Examples**:
+- Feature implementation: "Add a user profile update endpoint"
+- Bug fixes: "Fix the authentication logic issues"
+- Test-driven development: "Make these failing tests pass"
 
 ### 🟢 `tdd-test-writer` (Authoring)
-Creates comprehensive test suites from acceptance criteria and validates implementations in TDD workflows. Translates acceptance criteria into failing tests that drive development.
+**Purpose**: Creates comprehensive test suites from acceptance criteria and validates implementations in TDD workflows. Translates acceptance criteria into failing tests that drive development.
+
+**Key Capabilities**:
+- Acceptance criteria analysis from `documentation/agents/acceptance-criteria/`
+- Comprehensive test scenario creation (happy path, edge cases, errors)
+- AAA pattern (Arrange, Act, Assert) implementation
+- Test independence and maintainability
+- Implementation validation and structured feedback
+- Framework-agnostic test writing (Jest, pytest, RSpec, etc.)
+
+**Usage Examples**:
+- Adding test coverage: "Write tests for this untested function"
+- New feature testing: "Create tests for shopping cart functionality"
+- Test improvement: "Refactor these brittle tests"
 
 ### 🔵 `technology-specialist` (Research)
-Discovers production-ready integration patterns and implementation strategies used by industry leaders. Researches battle-tested solutions, analyzes engineering approaches from major tech companies, and provides proven patterns that avoid common pitfalls.
+**Purpose**: Discovers production-ready integration patterns and implementation strategies used by industry leaders. Researches battle-tested solutions, analyzes engineering approaches from major tech companies, and provides proven patterns that avoid common pitfalls.
+
+**Key Capabilities**:
+- Production pattern research from tech leaders (Google, Meta, Netflix, etc.)
+- Knowledge base management in `documentation/agents/technology-specialist/`
+- Anti-pattern identification from post-mortems
+- Trade-off analysis and selection criteria
+- Security and performance consideration documentation
+- File-based research sharing (never full content, always references)
+
+**Usage Examples**:
+- Library selection: "Should I use Redux or Zustand for state management?"
+- Implementation strategies: "Best approaches for real-time notifications?"
+- Technical challenges: "How to handle file uploads in distributed systems?"
+
+### 🟠 `implementation-planner` (Planning/Architecture)
+**Purpose**: Creates comprehensive, phased implementation plans that synthesize research findings, technical requirements, and acceptance criteria into actionable roadmaps. Transforms complex technical challenges into manageable execution strategies with clear dependencies and risk mitigation.
+
+**Key Capabilities**:
+- Multi-input synthesis (research, requirements, constraints)
+- Dependency mapping and bottleneck identification
+- Risk assessment and mitigation strategies
+- Phased implementation design with clear objectives
+- Parallel work stream optimization
+- Documentation in `documentation/agents/implementation/`
+
+**Usage Examples**:
+- OAuth2 integration: "Create a plan based on research and our session architecture"
+- Microservices migration: "Plan phased migration from monolith with rollback options"
+- Complex feature implementation: "Design roadmap for multi-tenant architecture"
+
+### 🟠 `architecture-designer` (Planning/Architecture)
+**Purpose**: Creates comprehensive architectural blueprints that transform requirements and research into actionable system designs. Specializes in system architecture patterns, technology stack selection, and scalable solution design.
+
+**Key Capabilities**:
+- System architecture design with component boundaries
+- Technology stack selection with justified decisions
+- Integration pattern specification
+- Security architecture and threat modeling
+- Scalability planning (horizontal/vertical)
+- Architecture Decision Records (ADRs)
+- Visualization with architecture diagrams
+
+**Usage Examples**:
+- Payment system design: "Design architecture based on Stripe integration research"
+- Real-time systems: "Create architecture for 100k concurrent connections"
+- System redesign: "Architect microservices migration strategy"
+
+## CLAUDE.md Section for Other Projects
+
+Copy the following section into your project's CLAUDE.md file to leverage these specialized agents:
+
+```markdown
+# Specialized Development Agents
+
+This project benefits from specialized agents that provide battle-tested patterns for TDD, code analysis, and systematic refactoring.
+
+## Available Agents
+
+### Implementation & Architecture Agents
+- **@tdd-code-writer**: Implements code to satisfy tests following TDD principles. Analyzes failing tests, writes minimal code to pass, then refactors for clarity.
+- **@technology-specialist**: Researches proven patterns from industry leaders. Discovers production-ready solutions and documents them for future reference.
+- **@codebase-specialist**: Maps architecture and traces code flows. Provides deep understanding of code relationships and dependencies.
+- **@implementation-planner**: Creates phased implementation roadmaps from research and requirements. Synthesizes technical findings into actionable plans with clear dependencies and risk mitigation.
+- **@architecture-designer**: Designs comprehensive system architectures from requirements and research. Creates blueprints with component boundaries, technology decisions, and scalability strategies.
+
+### Testing & Quality Agents
+- **@tdd-test-writer**: Creates comprehensive test suites from requirements. Translates acceptance criteria into failing tests that drive development.
+- **@acceptance-criteria-agent**: Generates testable acceptance criteria from code or requirements. Maintains living documentation synchronized with implementation.
+- **@automated-code-reviewer**: Performs security and quality analysis. Reviews code against best practices, identifies vulnerabilities, and suggests improvements.
+
+## TDD Workflow
+
+These agents work together in a structured Test-Driven Development flow:
+
+1. **Requirements Analysis**: The @acceptance-criteria-agent analyzes requirements or existing code to generate clear, testable acceptance criteria.
+
+2. **Test Creation**: The @tdd-test-writer takes these criteria and creates comprehensive failing tests that cover:
+   - Happy path scenarios
+   - Edge cases and error conditions
+   - Performance requirements
+   - Integration behaviors
+
+3. **Implementation**: The @tdd-code-writer analyzes the failing tests and implements the minimal code needed to make them pass, focusing on:
+   - Understanding test expectations
+   - Writing clean, maintainable solutions
+   - Handling all tested scenarios
+
+4. **Refactoring**: Once tests pass, the code writer refactors for:
+   - Better structure and organization
+   - Performance optimization
+   - Code reusability
+   - Consistent patterns
+
+5. **Validation**: The test writer validates the implementation against acceptance criteria and provides feedback if gaps exist.
+
+6. **Review**: The @automated-code-reviewer performs final quality checks for security, performance, and maintainability.
+
+## Agent Philosophy
+
+- **Test Readability > DRY**: One clear test per behavior, prioritizing clarity over abstraction
+- **Phased Implementation**: Complex work broken into validated phases
+- **Research First**: Analyze multiple approaches before recommending solutions
+- **Aggressive Deletion**: Remove obsolete code when backwards compatibility isn't needed
+- **Continuous Validation**: Every phase must pass tests before proceeding
+- **Living Documentation**: Acceptance criteria stay synchronized with code
+
+## Best Practices
+
+1. **Clear Acceptance Criteria**: Start with well-defined, testable requirements
+2. **Test-First Development**: Always write tests before implementation
+3. **Small Iterations**: Work in small, verifiable increments
+4. **Continuous Integration**: Validate changes frequently
+5. **Documentation as Code**: Keep acceptance criteria in version control
+
+The agents excel at systematic, thorough work. They follow a disciplined approach that ensures quality through comprehensive testing and validation at every step.
+```

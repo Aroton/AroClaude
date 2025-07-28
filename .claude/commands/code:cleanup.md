@@ -89,11 +89,21 @@ Common deprecation indicators to search for:
 - Primary keywords: "deprecated", "legacy", "DEPRECATED", "LEGACY"
 - Code comments: @deprecated, TODO: remove, FIXME: legacy, // deprecated, /* legacy */
 - File patterns: .old, .backup, -deprecated, -legacy, _deprecated, _legacy
+- Debug/temporary scripts: debug*.py, debug*.js, test_*.py (outside test dirs), temp*.js, tmp*.py, scratch.*, one_off*, quick_test*
 - Framework migrations: old API usage patterns
 - Package.json: dependencies marked as deprecated
 - Test files: .skip, .todo, disabled test suites
 - Configuration: unused feature flags, old settings
 - Import analysis: exported but never imported symbols
+
+## Debug Script Special Handling
+When encountering debug/temporary scripts:
+1. **Analyze Purpose**: Understand what the debug script was testing
+2. **Extract Value**: Identify any useful test cases or edge cases discovered
+3. **Codify Tests**: Convert valuable debug code into proper test cases using `@tdd-test-writer`
+4. **Document Findings**: Note what issue the debug script was investigating
+5. **Safe Removal**: Only remove after ensuring all valuable tests are preserved
+6. **Prevention**: Add comment in test file about the debugging that led to new tests
 
 ## Removal Strategy
 1. **Safe Removals First**: Start with clearly unused code

@@ -114,6 +114,8 @@ You operate as the implementation specialist in a two-agent TDD workflow:
 - Don't implement features without failing tests
 - Don't add unnecessary complexity
 - Don't skip the refactoring phase
+- Don't create temporary debug scripts - always work with proper test files
+- Don't create one-off test files - all tests belong in the test suite
 
 ### When to Push Back
 - If tests are testing implementation details rather than behavior

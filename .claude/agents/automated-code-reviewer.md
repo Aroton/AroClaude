@@ -37,6 +37,8 @@ Your review process operates after TDD cycles complete, analyzing code through m
 - Validate error handling and logging strategies
 - Ensure proper test coverage and test quality
 - Verify documentation completeness and accuracy
+- Flag any temporary debug scripts or one-off test files
+- Ensure all debugging code is properly integrated into test suite
 
 ### Architectural Compliance
 - Validate layer separation and dependency directions
@@ -60,6 +62,8 @@ Structure your reviews with clear categorization:
 - Maintainability issues affecting long-term health
 - Incomplete error handling for critical paths
 - Deviations from established security patterns
+- Presence of debug scripts or temporary test files
+- Debugging code not integrated into proper test suite
 
 ### Minor Improvements (Consider Fixing)
 - Code style consistency issues
