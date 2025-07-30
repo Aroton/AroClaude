@@ -1,10 +1,10 @@
 # /code:fix
 
-**Purpose**: Diagnose and fix errors or bugs through systematic analysis, root cause identification, and test-driven fixes.
+**Purpose**: Diagnose and fix errors or bugs through systematic analysis, root cause identification, and minimal validation testing.
 
 ## Usage
 - `/code:fix` - Fix a specified error or bug with comprehensive analysis
-- `/code:fix [error description]` - Fix specific error or bug with test-driven approach
+- `/code:fix [error description]` - Fix specific error or bug with minimal validation
 
 ## Critical Rules
 - NEVER attempt fixes without understanding root cause
@@ -14,8 +14,8 @@
 - ALWAYS analyze related code and tests before proposing fixes
 - NEVER fix symptoms - always address root causes
 - ALWAYS verify fix doesn't introduce regressions
-- ALWAYS write or update tests that catch the bug
-- NEVER commit fixes without running full test suite
+- ALWAYS add minimal validation test if none exists (max 1 test)
+- NEVER write more than 1 test for a bug fix
 - ALWAYS document the root cause and fix rationale
 - ALWAYS check for similar bugs in related code
 - NEVER assume error messages tell the whole story
@@ -38,24 +38,20 @@
    - Determine why existing tests didn't catch this
    - NEVER create debug scripts - reproduce issues through proper tests
 
-3. **Test Creation Phase** (use `tdd-test-writer`)
-   - CRITICAL: Write failing test that reproduces the bug BEFORE any fix
-   - Ensure test fails for the right reason (verify error matches bug report)
-   - Add edge case tests around the bug scenario
-   - Update existing tests if they had wrong assumptions
-   - Create regression test to prevent reoccurrence
-   - Verify test coverage of affected code paths
-   - Run test to confirm it fails with expected error
-
-4. **Fix Implementation** (use `tdd-code-writer`)
-   - ONLY implement fix AFTER test is failing for the right reason
-   - Implement minimal fix to make tests pass (Red → Green)
-   - Ensure fix addresses root cause, not symptoms
+3. **Fix Implementation** (use `ai-validation-writer`)
+   - Implement the fix based on root cause analysis
+   - Focus on fixing the actual problem, not symptoms
    - Maintain code style and conventions
    - Add defensive programming where appropriate
    - Update documentation if behavior changes
    - Check for similar issues in related code
-   - Verify all tests pass after fix (Green state)
+
+4. **Validation Test** (use `ai-validation-writer`)
+   - Add ONE integration test that verifies the fix works
+   - Test should prevent regression of this specific bug
+   - Use semantic validation (contains, shapes) not exact matching
+   - Keep test under 20 lines of code
+   - Skip if existing tests already cover this scenario
 
 5. **Verification Phase** (use `automated-code-reviewer`)
    - Run all related tests
@@ -92,10 +88,10 @@
 - Query optimization
 
 ## Fix Validation Checklist
-- [ ] Bug is reproducible with failing test
+- [ ] Bug is fixed and working
 - [ ] Root cause is identified and documented
-- [ ] Fix makes the test pass
-- [ ] No existing tests are broken
+- [ ] Added 1 validation test (if needed)
+- [ ] No existing functionality broken
 - [ ] Similar code paths are checked
 - [ ] Performance impact is acceptable
 - [ ] Security implications considered
@@ -107,15 +103,13 @@
 When executing this command:
 1. Use `codebase-specialist` for error analysis and code exploration
 2. Use `technology-specialist` for understanding root causes and patterns
-3. Use `tdd-test-writer` for creating comprehensive bug reproduction tests
-4. Use `tdd-code-writer` for implementing the fix
-5. Use `automated-code-reviewer` for verification
-6. Maintain focus on root cause, not symptoms
-7. Document findings for future reference
-8. Exit after delivering verified fix
-9. CRITICAL: Follow strict TDD order - test MUST fail before ANY fix is written
-10. NEVER write fix code until reproduction test is failing correctly
-11. Use existing test files - avoid creating one-off bug test files
+3. Use `ai-validation-writer` for implementing the fix and adding validation
+4. Use `automated-code-reviewer` for verification
+5. Maintain focus on root cause, not symptoms
+6. Document findings for future reference
+7. Exit after delivering verified fix
+8. Add maximum 1 validation test per bug fix
+9. Use existing test files - avoid creating one-off bug test files
 
 ## Fix Documentation Template
 Each fix must include:
@@ -128,21 +122,21 @@ Each fix must include:
 - **Similar Issues**: Related code that might have same bug
 - **Verification**: How fix was tested
 
-## TDD Enforcement for Bug Fixes
-The Red-Green-Refactor cycle MUST be followed:
-1. **RED**: Write test that reproduces the bug (test fails)
-2. **GREEN**: Write minimal fix to make test pass
-3. **REFACTOR**: Improve fix while keeping tests green
+## AI Validation for Bug Fixes
+The Fix-First approach MUST be followed:
+1. **FIX**: Implement the bug fix based on root cause
+2. **VALIDATE**: Add 1 test to prevent regression (if needed)
+3. **SHIP**: Deploy the fix immediately
 
-NEVER skip to GREEN without RED first. The tdd-code-writer agent expects:
-- A failing test that demonstrates the bug
-- Clear understanding of why the test fails
-- Minimal code change to make test pass
+The ai-validation-writer agent focuses on:
+- Fixing the actual problem quickly
+- Adding minimal validation (1 test max)
+- Shipping fixes fast
 
 ## Common Pitfalls to Avoid
 - Fixing symptoms instead of root causes
-- Making changes without reproduction test
-- Writing fix before test fails (violates TDD)
+- Adding more than 1 test for a bug fix
+- Over-testing simple fixes
 - Assuming first theory is correct
 - Ignoring edge cases in fix
 - Not checking for similar bugs
@@ -170,10 +164,8 @@ Response:
 
    **Root Cause**: Missing loading state check allows component to render before user data is available
    
-   **Test Added**: 
-   - Test component renders loading state when user is undefined
-   - Test component handles null user gracefully
-   - Test loading → loaded transition
+   **Validation Added**: 
+   - 1 integration test verifying component handles undefined user
    
    **Fix Applied**:
    - Added loading state check before accessing user properties
@@ -190,8 +182,8 @@ Response:
 
 ## Notes
 - Focuses on systematic debugging over quick fixes
-- Emphasizes test-driven bug fixing
-- Ensures bugs don't reoccur through regression tests
+- Emphasizes quick fixes with minimal validation
+- Ensures bugs don't reoccur through 1 targeted test
 - Documents fixes for team learning
 - Checks for similar issues proactively
 - Prioritizes code quality and maintainability

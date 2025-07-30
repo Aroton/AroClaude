@@ -77,12 +77,13 @@
 The task tool sub-agent should:
 1. Use `@codebase-specialist` for comprehensive dependency analysis and impact assessment
 2. Use `@automated-code-reviewer` to validate removal safety and identify risks
-3. Execute the complete deprecation cleanup workflow
-4. Keep all findings and progress in memory during session
-5. Use batch processing for related deprecations
-6. Verify each removal doesn't break functionality
-7. Create detailed removal report
-8. Exit with summary of actions taken
+3. Use `@ai-validation-writer` if adding any validation tests (max 1 per removed feature)
+4. Execute the complete deprecation cleanup workflow
+5. Keep all findings and progress in memory during session
+6. Use batch processing for related deprecations
+7. Verify each removal doesn't break functionality
+8. Create detailed removal report
+9. Exit with summary of actions taken
 
 ## Discovery Patterns
 Common deprecation indicators to search for:
@@ -99,11 +100,11 @@ Common deprecation indicators to search for:
 ## Debug Script Special Handling
 When encountering debug/temporary scripts:
 1. **Analyze Purpose**: Understand what the debug script was testing
-2. **Extract Value**: Identify any useful test cases or edge cases discovered
-3. **Codify Tests**: Convert valuable debug code into proper test cases using `@tdd-test-writer`
+2. **Extract Value**: Identify any useful validation cases discovered
+3. **Consider Validation**: Only add validation test if it catches critical AI nonsense (max 1 test)
 4. **Document Findings**: Note what issue the debug script was investigating
-5. **Safe Removal**: Only remove after ensuring all valuable tests are preserved
-6. **Prevention**: Add comment in test file about the debugging that led to new tests
+5. **Safe Removal**: Remove debug scripts - they don't belong in production code
+6. **Prevention**: Debug through proper validation tests, not temporary scripts
 
 ## Removal Strategy
 1. **Safe Removals First**: Start with clearly unused code

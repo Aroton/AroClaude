@@ -1,6 +1,6 @@
 # /code:implement
 
-**Purpose**: Research a technical challenge thoroughly and deliver an implementation plan with phased approach and acceptance criteria for main agent execution.
+**Purpose**: Research a technical challenge thoroughly and deliver an implementation plan with phased approach and minimal validation criteria for main agent execution.
 
 ## Usage
 - `/code:implement` - Research and deliver implementation plan for a specified technical challenge
@@ -19,9 +19,10 @@
 - ALWAYS format plan to facilitate TODO tool usage
 - ALWAYS clarify backwards compatibility requirements explicitly
 - ALWAYS recommend aggressive code deletion when backwards compatibility not needed
-- ALWAYS analyze existing tests before planning new ones
-- ALWAYS prioritize updating existing tests over creating new tests
-- NEVER create duplicate test coverage - one test per acceptance criterion
+- ALWAYS follow minimal testing approach - test code 25-50% of feature size
+- ALWAYS implement first, then add minimal validation tests
+- NEVER create excessive test coverage - each test validates unique failure
+- ALWAYS respect 20% time budget for testing
 
 ## Workflow/Process
 1. **Clarification Phase** (use `acceptance-criteria-agent`)
@@ -60,13 +61,13 @@
    - Combine best aspects of multiple approaches
    - Eliminate approaches with critical flaws
    - Synthesize into the optimal solution
-   - Ensure solution follows test-first methodology
-   - Maximize existing test reuse in the chosen approach
+   - Ensure solution follows implementation-first approach
+   - Plan for minimal validation testing (1-3 tests max per feature)
 
 5. **Implementation Plan Generation**
    - Present the synthesized best solution with clear rationale
    - Break implementation into logical phases (3-5 phases typical)
-   - For each phase, specify: organization → criteria → test analysis → implementation
+   - For each phase, specify: organization → implementation → validation criteria
    - Include existing test analysis results for each phase
    - Include risk assessment and mitigation strategies
    - Specify testing approach emphasizing test reuse
@@ -121,48 +122,38 @@ Each plan must include:
 After receiving the implementation plan, the main agent will:
 1. Create TODOs for each phase using the TODO tool
 2. Execute phases sequentially using appropriate sub-agents
-3. Analyze and update existing tests before writing new ones
+3. Add proportional validation tests after implementation (25-50% of code size)
 4. Verify acceptance criteria before marking phase complete
 5. Never proceed to next phase until current phase passes all tests
 
 ## Phase Implementation Methodology
-Each phase execution in task tool must follow this strict order:
-1. **Plan Code Organization** - Design file structure, module boundaries, and test organization first
-2. **Define Acceptance Criteria** - Specify measurable success conditions
-3. **Analyze Existing Tests**
-   - CRITICAL: Use codebase-specialist to discover ALL test files first
-   - Map which modules already have test coverage
-   - Document test file locations for reuse
-   - Flag any one-off test files that should be consolidated
-   - Evaluate if they meet the new acceptance criteria
-   - Identify redundant or overlapping test coverage
-   - Identify gaps between existing tests and acceptance criteria
-4. **Update or Write Tests**
-   - MUST analyze test coverage overlap before creating ANY new test
-   - PRIORITIZE updating existing tests to meet new criteria
-   - MUST consolidate tests when implementing new features
-   - Only create new test file if NO existing test file covers the module
-   - Consolidate redundant tests when found
-   - Only add new tests when existing tests cannot be adapted
-   - Ensure all acceptance criteria have test coverage
-5. **Write Implementation** - Code only to make the tests pass
-6. **Delete Aggressively** - If no backwards compatibility required, remove ALL obsolete code and their associated tests
+Each phase execution follows minimal validation testing:
+1. **Plan Code Organization** - Design file structure and module boundaries
+2. **Implement Feature** - Build the complete working solution
+3. **Add Validation Tests** - Proportional to feature complexity
+   - Write minimum tests for deployment confidence
+   - Each test validates a unique failure mode
+   - Keep test code to 25-50% of feature code size
+   - Spend max 20% of feature time on tests
+   - Skip unit tests - integration level only
+   - Use semantic validation (contains, shapes) not exact matching
+4. **Delete Aggressively** - If no backwards compatibility required, remove ALL obsolete code
 
 **CRITICAL**: Tests must exist before implementation begins. Prefer modifying existing tests over creating new ones to avoid test bloat. This approach ensures we understand current behavior before changing it and maintain a lean test suite.
 
-## TDD Enforcement
-The Red-Green-Refactor cycle MUST be strictly followed:
-1. **RED**: Write/update tests that fail for the new requirements (tdd-test-writer)
-2. **GREEN**: Write minimal implementation to make tests pass (tdd-code-writer)
-3. **REFACTOR**: Improve code while keeping all tests green
+## Minimal Testing Enforcement
+The Implementation-First approach MUST be followed:
+1. **BUILD**: Implement the complete feature based on requirements
+2. **VALIDATE**: Add 1-3 integration tests to catch AI nonsense
+3. **SHIP**: Deploy immediately - don't overthink testing
 
-The tdd-code-writer agent REQUIRES failing tests before implementation. NEVER write implementation code without failing tests that define the expected behavior.
+The ai-validation-writer agent implements features FIRST, then adds minimal validation. Keep test code to 25-50% of feature code size, spending no more than 20% of development time on tests. Each test should validate a unique failure mode that would affect users.
 
 ## Agent Coordination
-- Use acceptance-criteria-agent for initial requirements gathering
+- Use acceptance-criteria-agent for initial requirements (max 3 criteria per feature)
 - Use codebase-specialist for thorough code analysis
 - Use technology-specialist for solution research
-- Coordinate findings from all agents to create comprehensive plan
+- Use ai-validation-writer for implementation with minimal testing
 - Keep clarifying questions concise and targeted
 - Output only the final proposal, not the journey
 
@@ -174,14 +165,14 @@ The tdd-code-writer agent REQUIRES failing tests before implementation. NEVER wr
 - Makes large refactors manageable
 - Enables parallel development if needed
 
-**Why Test Reuse Over Creation**: Prioritizing existing test updates ensures:
-- Maintains test suite coherence and prevents bloat
-- Preserves valuable edge cases already captured
-- Reduces maintenance burden from duplicate tests
-- Eliminates redundant test coverage during updates
-- Faster test execution with fewer redundant tests
-- Better understanding of existing behavior through test analysis
-- Reveals undocumented system behavior encoded in tests
+**Why Minimal Testing**: This approach ensures:
+- 70% faster feature development
+- Test code proportional to feature complexity (25-50%)
+- Maximum 20% of dev time spent on tests
+- Each test catches unique failure mode
+- Manual testing complements automated tests
+- Integration tests over unit tests
+- Semantic validation for resilient tests
 
 ## Validation Requirements
 1. Plan must address all clarified requirements
@@ -236,31 +227,33 @@ Response:
    - Code Organization: auth/oauth/ subdirectory with providers, tokens, config
    - Tasks: OAuth service, provider configs, token management
    - Backwards Compatibility: Required - maintain existing JWT token format
-   - Existing Test Analysis:
-     * Found 12 JWT token tests that need updates for OAuth tokens
-     * Can extend existing session tests for OAuth flows
-     * Need new provider-specific integration tests
+   - Validation Strategy:
+     * OAuth integration test (validates complete flow)
+     * Token handling test (covers refresh + expiry)
+     * Error scenarios test (invalid tokens + auth failures)
+     * Target: ~40% of OAuth implementation code size
    - Acceptance Criteria:
      * Google and GitHub OAuth working end-to-end
      * Token refresh handles all edge cases
      * Security scan shows no vulnerabilities
      * Existing JWT tokens still validate correctly
-   - Testing: Update token tests + add provider integration tests
+   - Testing: Add validation tests (~30% of feature code size)
 
    **Phase 3: Migration and Rollout**
    - Objective: Safely migrate existing users
    - Code Organization: migrations/ directory with versioned scripts
    - Tasks: Migration scripts, fallback logic, monitoring
    - Backwards Compatibility: Temporary dual-mode until migration complete
-   - Existing Test Analysis:
-     * Found 8 migration framework tests to extend
-     * Can reuse existing user data fixture tests
-     * Need new rollback scenario tests
+   - Validation Strategy:
+     * Migration flow test (success + data integrity)
+     * Rollback test (failure recovery)
+     * Manual testing will cover edge cases
+     * Target: ~25% of migration code size
    - Acceptance Criteria:
      * Zero-downtime migration completed
      * All users can authenticate post-migration
      * Rollback tested and documented
-   - Testing: Extend migration tests + add rollback tests"
+   - Testing: Add minimal validation suite"
 
 [Main agent takes over for implementation]
 
@@ -290,7 +283,7 @@ Before writing ANY test:
 - Designed for handoff to main agent's TODO-based workflow
 - Main agent manages phased implementation via specialized sub-agents
 - Each phase must pass acceptance criteria before proceeding
-- Implementation follows strict test-first development approach
+- Implementation follows rapid build-first approach with minimal validation
 - Aggressive code deletion when backwards compatibility not required
 - Test reuse prioritized to maintain clean, efficient test suites
 - Test consolidation prevents file proliferation and maintains clarity
