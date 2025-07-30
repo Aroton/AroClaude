@@ -20,8 +20,33 @@ This script copies all configuration files from `.claude/` to your `~/.claude/` 
 | [`/code:fix`](#codefix) | Diagnose and fix bugs through test-driven approach | Bug Fixing |
 | [`/code:implement`](#codeimplement) | Research and plan technical implementations | Development Planning |
 | [`/code:review`](#codereview) | Comprehensive code review with specialized agents | Code Quality |
-| [`/tests:fix`](#testsfix) | Automatically repair failing tests | Test Automation |
-| [`/tests:refactor`](#testsrefactor) | Refactor tests with acceptance criteria | Test Quality |
+| [`/validation:fix`](#validationfix) | Fix failing tests with minimal validation approach | Test Automation |
+| [`/validation:simplify`](#validationsimplify) | Simplify code with AI validation testing | Code Simplification |
+
+## Directory Structure
+
+The `.claude/` directory contains:
+
+```
+.claude/
+├── agents/                     # Specialized agent definitions (7 agents)
+│   ├── acceptance-criteria-agent.md
+│   ├── ai-validation-writer.md
+│   ├── architecture-designer.md
+│   ├── automated-code-reviewer.md
+│   ├── codebase-specialist.md
+│   ├── implementation-planner.md
+│   └── technology-specialist.md
+├── commands/                   # Custom slash commands (7 commands)
+│   ├── code:analyze.md
+│   ├── code:cleanup.md
+│   ├── code:fix.md
+│   ├── code:implement.md
+│   ├── code:review.md
+│   ├── validation:fix.md
+│   └── validation:simplify.md
+└── settings.local.json         # Local Claude Code permissions
+```
 
 ## Available Commands
 
@@ -156,57 +181,43 @@ Performs comprehensive code review of changes or entire codebase using specializ
 - Architecture patterns and technical debt
 - Test coverage and quality assessment
 
-### `/tests:fix`
+### `/validation:fix`
 
-Automatically fixes failing tests by analyzing failures and repairing either test code or implementation code.
-
-**Usage:**
-- `/tests:fix` - Fix all failing tests in project
-- `/tests:fix [test-pattern]` - Fix specific test files matching pattern
-- `/tests:fix --focus [test-name]` - Fix specific test by name
-- `/tests:fix --acceptance "criteria"` - Fix with custom acceptance criteria
-
-**Key Features:**
-- Orchestrated parallel execution with up to 10 sub-agents
-- Intelligent fix strategy decision tree (test vs implementation)
-- Maximum 5 fix attempts per test before manual review
-- Full test suite validation after fixes
-- Supports custom acceptance criteria for fix guidance
-
-**Process:**
-1. **Discovery** - Identifies all failing tests and groups into batches
-2. **Parallel Delegation** - Launches sub-agents to fix test batches
-3. **Final Validation** - Runs full test suite and reports results
-
-### `/tests:refactor`
-
-Analyzes tests against code/criteria and refactors them through phased execution with user approval.
+Fixes failing tests using the AI validation framework with minimal testing approach.
 
 **Usage:**
-- `/tests:refactor [module/folder]` - Refactor tests for specified module to align with generated acceptance criteria
-- `/tests:refactor` - Auto-detect changes by comparing current branch to main and refactor affected modules
+- `/validation:fix` - Fix failing tests with minimal validation
+- `/validation:fix [test-pattern]` - Fix specific failing tests
 
 **Key Features:**
-- Auto-detects changed modules when no specific module provided
-- Analyzes existing tests and generates comprehensive acceptance criteria
-- Creates structured refactoring plans with clear phases
-- Prioritizes test readability over reusability (one clear test per situation)
-- Fixes code bugs discovered during test refactoring
-- Handles questions dynamically during execution
-- Saves approved criteria as documentation
+- Implementation-first solutions with maximum 3 integration tests per feature
+- Rapid feature development with validation gates
+- Minimal test overhead while catching AI-generated errors
+- Quick fixes with validation testing only when needed
 
 **Process:**
-1. **Context Gathering** - Confirms module (or auto-detects from git diff) and analysis sources (code/criteria docs)
-2. **Analysis & Criteria Generation** - Sub-agent analyzes and generates acceptance criteria
-3. **Criteria Approval** - User reviews and approves generated criteria
-4. **Refactoring Plan** - Creates phased plan for test updates
-5. **Phased Execution** - Executes refactoring through TODO-tracked phases
+1. **Test Analysis** - Identify failing tests and root causes
+2. **Implementation** - Fix the failing functionality
+3. **Validation** - Add minimal integration tests to prevent regressions
 
-**Philosophy:**
-- Clarity over DRY principles
-- One test per distinct situation
-- Descriptive test names over concise ones
-- Maintains valuable edge case tests
+### `/validation:simplify`
+
+Simplifies code complexity while maintaining functionality through AI validation testing.
+
+**Usage:**
+- `/validation:simplify` - Simplify complex code with validation
+- `/validation:simplify [file-pattern]` - Target specific files for simplification
+
+**Key Features:**
+- Code complexity reduction with maintained functionality
+- Minimal validation to ensure correctness
+- AI-powered refactoring with safety nets
+- Focus on readability and maintainability
+
+**Process:**
+1. **Complexity Analysis** - Identify overly complex code sections
+2. **Simplification** - Refactor for clarity and simplicity
+3. **Validation** - Ensure functionality is preserved through testing
 
 ## Agent Color Palette
 
@@ -274,37 +285,21 @@ The following specialized agents are available to assist with specific developme
 - Understanding features: "How does the payment processing work?"
 - Impact analysis: "What would break if I change this API?"
 
-### 🟢 `tdd-code-writer` (Authoring)
-**Purpose**: Implements code that satisfies tests in a TDD workflow. Analyzes failing tests and implements minimal code needed to make them pass, then refactors for clarity while maintaining test coverage.
+### 🟢 `ai-validation-writer` (Authoring)
+**Purpose**: Implements features with minimal validation testing approach. Creates implementation-first solutions with maximum 3 integration tests per feature to catch AI-generated errors while maintaining rapid development.
 
 **Key Capabilities**:
-- Red-Green-Refactor cycle implementation
-- Test failure analysis and requirement extraction
-- Minimal implementation to pass tests
-- Code refactoring while maintaining green tests
-- Error handling based on test requirements
-- Clean, self-documenting code practices
+- Implementation-first development with minimal testing overhead
+- Maximum 3 integration tests per feature to validate core functionality
+- Rapid feature implementation with validation gates
+- Quick bug fixes with minimal test requirements
+- AI-generated code validation without excessive test burden
+- Focus on shipping features fast while preventing major issues
 
 **Usage Examples**:
 - Feature implementation: "Add a user profile update endpoint"
-- Bug fixes: "Fix the authentication logic issues"
-- Test-driven development: "Make these failing tests pass"
-
-### 🟢 `tdd-test-writer` (Authoring)
-**Purpose**: Creates comprehensive test suites from acceptance criteria and validates implementations in TDD workflows. Translates acceptance criteria into failing tests that drive development.
-
-**Key Capabilities**:
-- Acceptance criteria analysis from `documentation/agents/acceptance-criteria/`
-- Comprehensive test scenario creation (happy path, edge cases, errors)
-- AAA pattern (Arrange, Act, Assert) implementation
-- Test independence and maintainability
-- Implementation validation and structured feedback
-- Framework-agnostic test writing (Jest, pytest, RSpec, etc.)
-
-**Usage Examples**:
-- Adding test coverage: "Write tests for this untested function"
-- New feature testing: "Create tests for shopping cart functionality"
-- Test improvement: "Refactor these brittle tests"
+- Bug fixes: "Fix the authentication logic issues"  
+- Rapid development: "Build a shopping cart feature with minimal tests"
 
 ### 🔵 `technology-specialist` (Research)
 **Purpose**: Discovers production-ready integration patterns and implementation strategies used by industry leaders. Researches battle-tested solutions, analyzes engineering approaches from major tech companies, and provides proven patterns that avoid common pitfalls.
@@ -362,65 +357,58 @@ Copy the following section into your project's CLAUDE.md file to leverage these 
 ```markdown
 # Specialized Development Agents
 
-This project benefits from specialized agents that provide battle-tested patterns for TDD, code analysis, and systematic refactoring.
+This project benefits from specialized agents that provide battle-tested patterns for AI validation testing, code analysis, and rapid development.
 
 ## Available Agents
 
 ### Implementation & Architecture Agents
-- **@tdd-code-writer**: Implements code to satisfy tests following TDD principles. Analyzes failing tests, writes minimal code to pass, then refactors for clarity.
+- **@ai-validation-writer**: Implements features with minimal validation testing. Creates implementation-first solutions with maximum 3 integration tests per feature.
 - **@technology-specialist**: Researches proven patterns from industry leaders. Discovers production-ready solutions and documents them for future reference.
 - **@codebase-specialist**: Maps architecture and traces code flows. Provides deep understanding of code relationships and dependencies.
 - **@implementation-planner**: Creates phased implementation roadmaps from research and requirements. Synthesizes technical findings into actionable plans with clear dependencies and risk mitigation.
 - **@architecture-designer**: Designs comprehensive system architectures from requirements and research. Creates blueprints with component boundaries, technology decisions, and scalability strategies.
 
 ### Testing & Quality Agents
-- **@tdd-test-writer**: Creates comprehensive test suites from requirements. Translates acceptance criteria into failing tests that drive development.
 - **@acceptance-criteria-agent**: Generates testable acceptance criteria from code or requirements. Maintains living documentation synchronized with implementation.
 - **@automated-code-reviewer**: Performs security and quality analysis. Reviews code against best practices, identifies vulnerabilities, and suggests improvements.
 
-## TDD Workflow
+## AI Validation Workflow
 
-These agents work together in a structured Test-Driven Development flow:
+These agents work together in a streamlined AI validation development flow:
 
-1. **Requirements Analysis**: The @acceptance-criteria-agent analyzes requirements or existing code to generate clear, testable acceptance criteria.
+1. **Requirements Analysis**: The @acceptance-criteria-agent analyzes requirements or existing code to generate clear acceptance criteria.
 
-2. **Test Creation**: The @tdd-test-writer takes these criteria and creates comprehensive failing tests that cover:
-   - Happy path scenarios
-   - Edge cases and error conditions
-   - Performance requirements
-   - Integration behaviors
+2. **Implementation**: The @ai-validation-writer implements features with an implementation-first approach, focusing on:
+   - Understanding requirements and building working solutions
+   - Writing clean, maintainable code
+   - Handling core functionality and edge cases
 
-3. **Implementation**: The @tdd-code-writer analyzes the failing tests and implements the minimal code needed to make them pass, focusing on:
-   - Understanding test expectations
-   - Writing clean, maintainable solutions
-   - Handling all tested scenarios
+3. **Minimal Validation**: Create maximum 3 integration tests per feature to catch AI-generated errors:
+   - Core functionality validation
+   - Critical edge cases
+   - Integration points
 
-4. **Refactoring**: Once tests pass, the code writer refactors for:
-   - Better structure and organization
-   - Performance optimization
-   - Code reusability
-   - Consistent patterns
+4. **Review**: The @automated-code-reviewer performs quality checks for security, performance, and maintainability.
 
-5. **Validation**: The test writer validates the implementation against acceptance criteria and provides feedback if gaps exist.
-
-6. **Review**: The @automated-code-reviewer performs final quality checks for security, performance, and maintainability.
+5. **Architecture Planning**: For complex features, @implementation-planner and @architecture-designer provide structured guidance before implementation.
 
 ## Agent Philosophy
 
-- **Test Readability > DRY**: One clear test per behavior, prioritizing clarity over abstraction
+- **Implementation First**: Ship features quickly with minimal testing overhead
+- **Minimal Validation**: Maximum 3 integration tests per feature to catch critical issues
 - **Phased Implementation**: Complex work broken into validated phases
 - **Research First**: Analyze multiple approaches before recommending solutions
 - **Aggressive Deletion**: Remove obsolete code when backwards compatibility isn't needed
-- **Continuous Validation**: Every phase must pass tests before proceeding
+- **Rapid Development**: Focus on delivering working solutions fast
 - **Living Documentation**: Acceptance criteria stay synchronized with code
 
 ## Best Practices
 
-1. **Clear Acceptance Criteria**: Start with well-defined, testable requirements
-2. **Test-First Development**: Always write tests before implementation
+1. **Clear Acceptance Criteria**: Start with well-defined requirements
+2. **Implementation-First Development**: Build working solutions, then add minimal validation
 3. **Small Iterations**: Work in small, verifiable increments
-4. **Continuous Integration**: Validate changes frequently
+4. **Minimal Testing**: Only test what's critical to prevent major failures
 5. **Documentation as Code**: Keep acceptance criteria in version control
 
-The agents excel at systematic, thorough work. They follow a disciplined approach that ensures quality through comprehensive testing and validation at every step.
+The agents excel at rapid, practical development. They follow an efficient approach that prioritizes shipping working features with just enough validation to prevent AI-generated errors.
 ```
