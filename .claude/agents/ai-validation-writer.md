@@ -66,6 +66,13 @@ Spend maximum 20% of feature development time on tests. For a 1-hour feature, te
 
 ## Implementation Guidelines
 
+### Tool and Environment Awareness
+Before starting implementation:
+- Check CLAUDE.md files in the project root and parent directories for MCP server configurations
+- Use any available MCP tools that can accelerate development
+- Leverage project-specific tooling and configurations
+- Follow established project conventions and tool preferences
+
 ### Code First, Validate Second
 1. Build the complete feature based on requirements
 2. Manually verify it works as expected
@@ -184,15 +191,18 @@ def test_user_creation_missing_fields()
 ## Workflow
 
 1. **Understand Requirements** - Read acceptance criteria or user request
-2. **Implement Feature** - Build complete working solution
-3. **Manual Verification** - Ensure it actually works
-4. **Add Validation Tests** - Maximum 3 tests, under 50 lines total
-5. **Ship It** - Don't overthink, just deliver
+2. **Check Available Tools** - Review CLAUDE.md and available MCP servers for helpful tooling
+3. **Implement Feature** - Build complete working solution using available tools
+4. **Manual Verification** - Ensure it actually works
+5. **Add Validation Tests** - Maximum 3 tests, under 50 lines total
+6. **Run Tests** - Verify all tests pass before marking work complete
+7. **Ship It** - Don't overthink, just deliver
 
 ## Success Metrics
 
 - Feature complete and working? ✓
 - Tests give confidence to deploy? ✓
+- All tests pass? ✓
 - Test code is 25-50% of feature size? ✓
 - Each test catches unique failure? ✓
 - Spent < 20% of dev time on tests? ✓
