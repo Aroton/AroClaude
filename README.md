@@ -30,13 +30,13 @@ The `.claude/` directory contains:
 ```
 .claude/
 ├── agents/                     # Specialized agent definitions (7 agents)
-│   ├── acceptance-criteria-agent.md
-│   ├── ai-validation-writer.md
-│   ├── architecture-designer.md
-│   ├── automated-code-reviewer.md
-│   ├── codebase-specialist.md
-│   ├── implementation-planner.md
-│   └── technology-specialist.md
+│   ├── aro:acceptance-criteria-agent.md
+│   ├── aro:architecture-designer.md
+│   ├── aro:automated-code-reviewer.md
+│   ├── aro:code-implementation.md
+│   ├── aro:codebase-researcher.md
+│   ├── aro:implementation-planner.md
+│   └── aro:tech-research-agent.md
 ├── commands/                   # Custom slash commands (7 commands)
 │   ├── code:analyze.md
 │   ├── code:cleanup.md
@@ -238,8 +238,8 @@ Agents are categorized by their primary function and assigned colors for visual 
 
 The following specialized agents are available to assist with specific development tasks:
 
-### 🟣 `acceptance-criteria-agent` (Analysis)
-**Purpose**: Generates, updates, and maintains acceptance criteria documentation based on code changes. Analyzes implementations and creates structured acceptance criteria that remain synchronized with the codebase.
+### 🟣 `aro:acceptance-criteria-agent` (Analysis)
+**Purpose**: Extracts and documents acceptance criteria from requirements or code. Analyzes implementations and creates structured acceptance criteria that remain synchronized with the codebase.
 
 **Key Capabilities**:
 - Extracts testable requirements from code implementations
@@ -253,8 +253,8 @@ The following specialized agents are available to assist with specific developme
 - Clarifying vague requirements: "What does 'better search functionality' mean?"
 - Documenting existing code: "This code has no requirements documentation"
 
-### 🟣 `automated-code-reviewer` (Analysis)
-**Purpose**: Performs comprehensive code reviews beyond basic linting, analyzing security patterns, validating against documented standards, and checking for architectural compliance and performance improvements.
+### 🟣 `aro:automated-code-reviewer` (Analysis)
+**Purpose**: Performs comprehensive code reviews for security, performance, and quality. Analyzes code changes beyond basic linting, validating against documented standards and checking for architectural compliance.
 
 **Key Capabilities**:
 - Security vulnerability analysis (OWASP guidelines, injection attacks, etc.)
@@ -269,56 +269,56 @@ The following specialized agents are available to assist with specific developme
 - Security audits: "Check this API endpoint for security vulnerabilities"
 - Performance validation: "Did my refactoring improve performance?"
 
-### 🔵 `codebase-specialist` (Research)
-**Purpose**: Understands, navigates, and analyzes codebase architecture, relationships, and implementation details. Maps system flows, identifies dependencies, and creates persistent knowledge documentation.
+### 🔵 `aro:codebase-researcher` (Research)
+**Purpose**: Thoroughly researches and understands existing code before planning or implementing changes. This agent is MANDATORY for all planning stages and must be used before delegating implementation work to other agents.
 
 **Key Capabilities**:
-- Complete call trace analysis with file:line references
-- Type relationship mapping and dependency graphs
-- Function signature analysis with usage patterns
-- Real-time code analysis using MCP/IDE tools when available
-- Architectural documentation in `documentation/agents/architecture/`
-- Side effect and state modification tracking
+- Systematic code analysis with complete structure mapping
+- Dependency mapping (internal and external)
+- Pattern recognition and architectural decision documentation
+- Context extraction for business logic and edge cases
+- Provides exhaustive research for delegation to implementation agents
+- Creates actionable intelligence with specific files and functions to modify
 
 **Usage Examples**:
-- Debugging: "Trace where this error originates in the codebase"
-- Understanding features: "How does the payment processing work?"
-- Impact analysis: "What would break if I change this API?"
+- Feature planning: "Research the current authentication implementation before adding OAuth"
+- Refactoring: "Analyze the payment module structure before performance improvements"
+- Debugging: "Investigate the synchronization code and its dependencies"
 
-### 🟢 `ai-validation-writer` (Authoring)
-**Purpose**: Implements features with minimal validation testing approach. Creates implementation-first solutions with maximum 3 integration tests per feature to catch AI-generated errors while maintaining rapid development.
+### 🟢 `aro:code-implementation` (Authoring)
+**Purpose**: MANDATORY agent for ALL code writing activities. Translates technical requirements into production-ready code after research has been completed by tech-research-agent and/or codebase-researcher agents.
 
 **Key Capabilities**:
-- Implementation-first development with minimal testing overhead
-- Maximum 3 integration tests per feature to validate core functionality
-- Rapid feature implementation with validation gates
-- Quick bug fixes with minimal test requirements
-- AI-generated code validation without excessive test burden
-- Focus on shipping features fast while preventing major issues
+- Production-ready code implementation with quality assurance pipeline
+- Integration with existing architecture and patterns
+- Clean code principles (DRY, modularity, testability)
+- Comprehensive documentation with JSDoc/TSDoc comments
+- Mandatory validation: linting, type safety, test validation
+- Leverages context from research agents for seamless integration
 
 **Usage Examples**:
-- Feature implementation: "Add a user profile update endpoint"
-- Bug fixes: "Fix the authentication logic issues"  
-- Rapid development: "Build a shopping cart feature with minimal tests"
+- Feature implementation: "Create JWT authentication middleware"
+- Refactoring: "Refactor data processing function for performance"
+- Utility functions: "Write email validation function"
 
-### 🔵 `technology-specialist` (Research)
-**Purpose**: Discovers production-ready integration patterns and implementation strategies used by industry leaders. Researches battle-tested solutions, analyzes engineering approaches from major tech companies, and provides proven patterns that avoid common pitfalls.
+### 🔵 `aro:tech-research-agent` (Research)
+**Purpose**: MANDATORY first-line resource for investigating technology-related questions, third-party libraries, framework patterns, and dependencies. Must be invoked before making any implementation decisions involving external libraries or frameworks.
 
 **Key Capabilities**:
-- Production pattern research from tech leaders (Google, Meta, Netflix, etc.)
-- Knowledge base management in `documentation/agents/technology-specialist/`
-- Anti-pattern identification from post-mortems
-- Trade-off analysis and selection criteria
-- Security and performance consideration documentation
-- File-based research sharing (never full content, always references)
+- Dual approach: external research (documentation, GitHub) and local investigation (node_modules)
+- Type definition extraction and API analysis
+- Dependency mapping and version compatibility checking
+- Best practices and pattern recognition
+- Practical implementation guides with code examples
+- Source verification and confidence levels
 
 **Usage Examples**:
-- Library selection: "Should I use Redux or Zustand for state management?"
-- Implementation strategies: "Best approaches for real-time notifications?"
-- Technical challenges: "How to handle file uploads in distributed systems?"
+- Library usage: "How to implement infinite scrolling with react-intersection-observer?"
+- Type definitions: "What are the TypeScript types for axios response?"
+- Dependencies: "What peer dependencies does @mui/material require?"
 
-### 🟠 `implementation-planner` (Planning/Architecture)
-**Purpose**: Creates comprehensive, phased implementation plans that synthesize research findings, technical requirements, and acceptance criteria into actionable roadmaps. Transforms complex technical challenges into manageable execution strategies with clear dependencies and risk mitigation.
+### 🟠 `aro:implementation-planner` (Planning/Architecture)
+**Purpose**: Creates phased implementation roadmaps synthesizing research, architecture, and requirements. Transforms complex technical challenges into manageable execution strategies with clear dependencies and risk mitigation.
 
 **Key Capabilities**:
 - Multi-input synthesis (research, requirements, constraints)
@@ -333,8 +333,8 @@ The following specialized agents are available to assist with specific developme
 - Microservices migration: "Plan phased migration from monolith with rollback options"
 - Complex feature implementation: "Design roadmap for multi-tenant architecture"
 
-### 🟠 `architecture-designer` (Planning/Architecture)
-**Purpose**: Creates comprehensive architectural blueprints that transform requirements and research into actionable system designs. Specializes in system architecture patterns, technology stack selection, and scalable solution design.
+### 🟠 `aro:architecture-designer` (Planning/Architecture)
+**Purpose**: Creates comprehensive architectural blueprints synthesizing research and requirements. Specializes in system architecture patterns, technology stack selection, and scalable solution design.
 
 **Key Capabilities**:
 - System architecture design with component boundaries
@@ -362,35 +362,36 @@ This project benefits from specialized agents that provide battle-tested pattern
 ## Available Agents
 
 ### Implementation & Architecture Agents
-- **@ai-validation-writer**: Implements features with minimal validation testing. Creates implementation-first solutions with maximum 3 integration tests per feature.
-- **@technology-specialist**: Researches proven patterns from industry leaders. Discovers production-ready solutions and documents them for future reference.
-- **@codebase-specialist**: Maps architecture and traces code flows. Provides deep understanding of code relationships and dependencies.
-- **@implementation-planner**: Creates phased implementation roadmaps from research and requirements. Synthesizes technical findings into actionable plans with clear dependencies and risk mitigation.
-- **@architecture-designer**: Designs comprehensive system architectures from requirements and research. Creates blueprints with component boundaries, technology decisions, and scalability strategies.
+- **@aro:code-implementation**: MANDATORY for all code writing. Creates production-ready implementations with quality assurance.
+- **@aro:tech-research-agent**: MANDATORY first-line for technology questions. Researches libraries, frameworks, and best practices.
+- **@aro:codebase-researcher**: MANDATORY for planning stages. Maps architecture and provides comprehensive context.
+- **@aro:implementation-planner**: Creates phased implementation roadmaps from research and requirements.
+- **@aro:architecture-designer**: Designs comprehensive system architectures from requirements and research.
 
 ### Testing & Quality Agents
-- **@acceptance-criteria-agent**: Generates testable acceptance criteria from code or requirements. Maintains living documentation synchronized with implementation.
-- **@automated-code-reviewer**: Performs security and quality analysis. Reviews code against best practices, identifies vulnerabilities, and suggests improvements.
+- **@aro:acceptance-criteria-agent**: Generates testable acceptance criteria from code or requirements. Maintains living documentation synchronized with implementation.
+- **@aro:automated-code-reviewer**: Performs security and quality analysis. Reviews code against best practices, identifies vulnerabilities, and suggests improvements.
 
 ## AI Validation Workflow
 
 These agents work together in a streamlined AI validation development flow:
 
-1. **Requirements Analysis**: The @acceptance-criteria-agent analyzes requirements or existing code to generate clear acceptance criteria.
+1. **Requirements Analysis**: The @aro:acceptance-criteria-agent analyzes requirements or existing code to generate clear acceptance criteria.
 
-2. **Implementation**: The @ai-validation-writer implements features with an implementation-first approach, focusing on:
-   - Understanding requirements and building working solutions
-   - Writing clean, maintainable code
-   - Handling core functionality and edge cases
+2. **Research**: The @aro:tech-research-agent and @aro:codebase-researcher gather necessary context and patterns.
+3. **Implementation**: The @aro:code-implementation agent creates production-ready code with:
+   - Clean, maintainable solutions following project patterns
+   - Comprehensive documentation and type safety
+   - Quality validation through linting and testing
 
-3. **Minimal Validation**: Create maximum 3 integration tests per feature to catch AI-generated errors:
-   - Core functionality validation
-   - Critical edge cases
-   - Integration points
+4. **Validation**: Create pragmatic tests to ensure functionality:
+   - Sanity tests for critical paths
+   - Edge case coverage where needed
+   - Integration point validation
 
-4. **Review**: The @automated-code-reviewer performs quality checks for security, performance, and maintainability.
+5. **Review**: The @aro:automated-code-reviewer performs quality checks for security, performance, and maintainability.
 
-5. **Architecture Planning**: For complex features, @implementation-planner and @architecture-designer provide structured guidance before implementation.
+6. **Architecture Planning**: For complex features, @aro:implementation-planner and @aro:architecture-designer provide structured guidance.
 
 ## Agent Philosophy
 
