@@ -20,7 +20,7 @@ This copies all agents and commands from `.claude/` to `~/.claude/`, making them
 ### Agent System
 The repository implements a sophisticated multi-agent architecture with 7 specialized agents categorized by function:
 - **Research Agents** (Blue): `codebase-researcher`, `tech-research-agent`
-- **Analysis Agents** (Purple): `acceptance-criteria-agent`, `automated-code-reviewer`  
+- **Analysis Agents** (Purple): `acceptance-criteria-agent`, `automated-code-reviewer`
 - **Authoring Agents** (Green): `code-implementation`
 - **Planning Agents** (Orange): `implementation-planner`, `architecture-designer`
 
@@ -37,26 +37,29 @@ Custom slash commands orchestrate agent workflows:
 ### Critical Agent Dependencies
 
 **MANDATORY Agent Usage Rules:**
-1. `tech-research-agent` - MUST be invoked before any implementation involving external libraries
-2. `codebase-researcher` - MUST be invoked before any planning or implementation
-3. `code-implementation` - MUST be invoked for ALL code writing activities
+1. **Context Loading First**: ALL agents MUST load Redis context as Phase 0 before any processing
+2. `tech-research-agent` - MUST be invoked before any implementation involving external libraries
+3. `codebase-researcher` - MUST be invoked before any planning or implementation
+4. `code-implementation` - MUST be invoked for ALL code writing activities
 
 ## Development Workflow
 
 ### Planning Mode Integration
 When in plan mode, follow this mandatory sequence:
-1. **Research Phase**: Launch appropriate research agents (`codebase-researcher`, `tech-research-agent`)
-2. **Synthesis Phase**: Compile findings from agent reports
-3. **Standards Review Gate**: Invoke `code-standards-reviewer` (BLOCKING - required for all code changes)
-4. **Planning Phase**: Create implementation plan incorporating all findings
-5. **Implementation Phase**: Use `code-implementation` agent for all code writing
+1. **Context Loading**: ALL agents load Redis context as Phase 0 before processing
+2. **Research Phase**: Launch appropriate research agents (`codebase-researcher`, `tech-research-agent`)
+3. **Synthesis Phase**: Compile findings from agent reports
+4. **Standards Review Gate**: Invoke `code-standards-reviewer` (BLOCKING - required for all code changes)
+5. **Planning Phase**: Create implementation plan incorporating all findings
+6. **Implementation Phase**: Use `code-implementation` agent for all code writing
 
 ### Agent Failure Recovery
 If agents fail to provide output:
-1. Check for overly restrictive requirements (ALWAYS/NEVER statements)
-2. Verify MCP server availability (`mcp__sequential-thinking__sequentialthinking`)
-3. Consider token/context limits for complex research tasks
-4. Use fallback strategies documented in agent definitions
+1. **Context Loading Issues**: Verify Redis keys are properly formatted and accessible
+2. Check for overly restrictive requirements (ALWAYS/NEVER statements)
+3. Verify MCP server availability (`mcp__sequential-thinking__sequentialthinking`)
+4. Consider token/context limits for complex research tasks
+5. Use fallback strategies documented in agent definitions
 
 ### File Structure
 ```
@@ -75,9 +78,19 @@ If agents fail to provide output:
 - **Rapid Development**: Focus on delivering working solutions fast
 
 ### Agent Communication
-Agents receive context through:
+
+**Context Storage** (Redis preferred, graceful fallback):
+- **Primary**: Redis MCP server for context storage (preserves plan mode, no file writes)
+- **Fallback**: Direct context in responses when Redis unavailable
+- **Setup**: See `docs/REDIS_SETUP.md` for Redis MCP installation
+- **Key Pattern**: `claude:context:{agent-name}:{timestamp}` with 24-hour TTL
+
+**Context Flow**:
+- Research agents (`codebase-researcher`, `tech-research-agent`) store findings in Redis
+- Review agents (`code-standards-reviewer`) retrieve and store enhanced context
+- Implementation agents (`code-implementation`) read context for informed decisions
 - Explicit task descriptions in prompts
-- File paths and line numbers for code references  
+- File paths and line numbers for code references
 - Complete code snippets rather than descriptions
 - Clear fallback instructions for partial failures
 
@@ -110,6 +123,26 @@ All agents should:
 4. Simplify output requirements if too complex
 5. Add explicit fallback instructions
 
+## Redis Context Storage Setup
+
+### Installation
+1. Install Redis server (local or remote)
+2. Install Redis MCP server: `npm install -g @anthropic/mcp-server-redis`
+3. Configure Claude Code settings (see `docs/REDIS_SETUP.md`)
+4. Restart Claude Code to load Redis MCP
+
+### Benefits
+- **Plan Mode Preservation**: No file writes that exit plan mode
+- **Performance**: Faster in-memory context access
+- **Auto-cleanup**: 24-hour TTL for context keys
+- **Clean Architecture**: No temporary files in repository
+
+### Fallback Behavior
+If Redis unavailable, agents automatically:
+- Return context directly in responses (larger tokens)
+- Preserve plan mode (no file writes)
+- Maintain full functionality
+
 ## Integration with Other Projects
 
 To use AroClaude agents in other projects:
@@ -117,3 +150,4 @@ To use AroClaude agents in other projects:
 2. Include CLAUDE_INTEGRATION.md directives in project's CLAUDE.md
 3. Adapt commands for project-specific workflows
 4. Maintain agent philosophy of rapid development with minimal validation
+5. Optional: Set up Redis MCP for enhanced context storage

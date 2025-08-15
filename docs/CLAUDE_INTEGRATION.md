@@ -200,3 +200,40 @@ After any code implementation or modification:
   - Any multi-file changes
 
 **Critical Rule:** Never consider a task complete until the project builds successfully.
+
+### Agent Context-Passing Protocol
+
+**What is the Context-Passing Protocol:**
+The Agent Context-Passing Protocol is a system for preserving and forwarding research findings, analysis results, and implementation context between specialized agents to maintain continuity and prevent information loss.
+
+**How Context is Provided:**
+You may receive context in three ways:
+1. **Redis Keys**: References to stored context (e.g., `claude:context:codebase-researcher-20250115-143456`)
+2. **Direct Context**: Complete research findings included directly in the prompt
+3. **Both**: Redis keys for some context and direct context for others
+
+**Redis Key Handling Rules:**
+- **ALWAYS**: Pass Redis keys to subsequent agents when they are available
+- **Priority**: Redis keys are preferred over direct context for efficiency
+- **Format**: Include Redis keys in agent prompts as: "Previous research context: claude:context:agent-name-timestamp"
+- **Fallback**: If Redis is unavailable, provide direct context instead
+
+**Context Storage Strategy:**
+- **Primary**: Redis MCP server for context storage (preserves plan mode, no file writes)
+- **Fallback**: Direct context in responses when Redis unavailable
+- **Key Pattern**: `claude:context:{agent-name}:{timestamp}` with 24-hour TTL
+- **Benefits**: Faster access, plan mode preservation, automatic cleanup
+
+**Context Flow Examples:**
+```
+Research Phase:
+codebase-researcher → Redis: claude:context:codebase-researcher-20250115-143456
+
+Standards Review:
+You → code-standards-reviewer with: "Research context: claude:context:codebase-researcher-20250115-143456"
+
+Implementation:
+You → code-implementation with: "Research: claude:context:codebase-researcher-20250115-143456, Review: claude:context:code-standards-reviewer-20250115-143500"
+```
+
+**Critical Rule:** Context MUST flow forward - each agent needs previous findings to make informed decisions.

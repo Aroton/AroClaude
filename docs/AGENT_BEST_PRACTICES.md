@@ -55,7 +55,7 @@ Problem: Cannot show code that doesn't exist yet
 
 ### 2. Contradictory Instructions
 ```markdown
-❌ Bad: 
+❌ Bad:
 - "Don't make recommendations - only provide context"
 - "Create actionable implementation plans"
 
@@ -139,7 +139,7 @@ The agent header is the **ONLY** information visible during agent selection. The
 #### Required Structure (keep under 100 words)
 ```yaml
 description: |
-  [Purpose - 1 sentence with action verbs]. 
+  [Purpose - 1 sentence with action verbs].
   Inputs: [What caller must provide]
   Outputs: [What agent returns]
   Use when: [2-3 specific trigger keywords/scenarios]
@@ -214,7 +214,7 @@ In agent body (not header):
 ```markdown
 ## Required Tools
 - Read, Glob, Grep for core functionality
-## Optional Enhancements  
+## Optional Enhancements
 - mcp__sequential-thinking for complex reasoning
 ```
 
@@ -270,6 +270,115 @@ Before deploying an agent, verify:
 - Include relevant sections based on findings
 - Focus on practical, actionable guidance
 ```
+
+## Context-Passing Protocol
+
+### Overview
+To improve agent communication, reduce token usage, and preserve plan mode, agents use Redis-based context storage with graceful fallback to direct responses.
+
+### Redis Context Loading Protocol (MANDATORY)
+
+**ALL agents MUST load Redis context as their FIRST action before any processing:**
+
+#### Phase 0: Context Loading (Required First Step)
+1. **Check for Redis Keys**: Scan prompt for Redis context keys (format: `claude:context:*`)
+2. **Load Context**: If keys found, use `mcp__redis__get` to retrieve ALL contexts
+3. **Validate Context**: Ensure context loaded successfully or document failures  
+4. **Fallback**: If Redis unavailable, look for direct context in prompt
+5. **Proceed**: Only continue to next phase after context loading complete
+
+**Context Sources to Check**:
+- Previous research agents (codebase-researcher, tech-research-agent)
+- Previous review agents (code-standards-reviewer)  
+- Parent agent context keys
+- Direct context provided in prompt
+
+**Implementation in Agent Definitions**:
+```markdown
+## Phase 0: Context Loading (MANDATORY FIRST STEP)
+
+Before any other processing, load all available context:
+
+1. **Scan for Redis Keys**: Look for context keys in format `claude:context:{agent-name}:{timestamp}`
+2. **Retrieve Context**: Use `mcp__redis__get` to load each context key found
+3. **Document Results**: Note successful loads and any failures
+4. **Fallback Check**: If no Redis keys, check for direct context in prompt
+5. **Validation**: Ensure context loaded before proceeding to main tasks
+
+**Only proceed to Phase 1 after context loading is complete.**
+```
+
+### Redis Storage Strategy (Preferred)
+- **Storage Method**: Redis MCP server with TTL-based auto-cleanup
+- **Key Pattern**: `claude:context:{agent-name}:{timestamp}`
+  - Example: `claude:context:codebase-researcher-20250115-143456`
+  - Example: `claude:context:tech-research-agent-20250115-143457`
+- **TTL**: 86400 seconds (24 hours) for automatic cleanup
+- **Content**: JSON-stringified complete research findings
+- **Plan Mode**: **Preserved** (no file writes that exit plan mode)
+
+### Fallback Strategy (Redis Unavailable)
+- **Detection**: Check for `mcp__redis__set` tool availability
+- **Storage Method**: Return complete context directly in response
+- **Benefits**: Full functionality maintained with larger token usage
+- **Plan Mode**: **Preserved** (no file writes)
+
+### Agent Responsibilities
+
+#### Research Agents (codebase-researcher, tech-research-agent)
+**Context Output**:
+- **Primary**: Use `mcp__redis__set` to store findings with 24-hour TTL
+- **Fallback**: Include complete research in response when Redis unavailable
+- **Return Format**: "Research completed. Context stored in Redis: claude:context:{agent}-{timestamp}"
+- **Content**: ALL research findings: patterns, code examples, dependencies, constraints
+
+**Context Input**:
+- **Redis**: Use `mcp__redis__get` to retrieve previous research
+- **Direct**: Accept context provided directly in agent prompt
+- **Integration**: Build upon existing context rather than duplicating research
+
+#### Implementation Agents (code-implementation, code-standards-reviewer)
+**Context Input**:
+- **Redis**: Use `mcp__redis__get` to retrieve research context using provided keys
+- **Direct**: Accept complete context provided directly in agent prompt
+- **Usage**: Use context to inform all implementation and review decisions
+
+**Context Output** (when applicable):
+- **Primary**: Store review/implementation notes in Redis
+- **Fallback**: Return results directly in response
+- **Chaining**: Pass Redis keys to downstream agents
+
+### Workflow Example
+```
+1. Parent: "Research button implementation patterns"
+2. codebase-researcher:
+   - Stores findings in Redis: claude:context:codebase-researcher-20250115-143456
+   - Returns: "Research completed. Context stored in Redis: claude:context:codebase-researcher-20250115-143456"
+3. Parent: Creates plan incorporating research
+4. Parent: "Review this plan" + Redis key
+5. code-standards-reviewer:
+   - Retrieves context: mcp__redis__get(claude:context:codebase-researcher-20250115-143456)
+   - Stores review: claude:context:code-standards-reviewer-20250115-143457
+   - Returns: "Review completed. Context stored in Redis: claude:context:code-standards-reviewer-20250115-143457"
+```
+
+### Benefits Over File-Based Storage
+- **Plan Mode Preservation**: No Write tool usage that exits plan mode
+- **Performance**: Faster in-memory context access via Redis
+- **Auto-cleanup**: TTL-based expiration prevents accumulation
+- **Clean Architecture**: No temporary files in repository
+- **Token Efficiency**: Reduces context size in agent communication
+- **Complete Preservation**: No truncation of research findings
+- **Context Reuse**: Multiple agents can access same research
+- **Graceful Degradation**: Full functionality when Redis unavailable
+
+### Implementation Guidelines
+- **Tool Requirements**: Add `mcp__redis__get`, `mcp__redis__set`, `mcp__redis__delete` to agent tool lists
+- **Key Format**: Use consistent timestamp format: YYYYMMDD-HHMMSS
+- **TTL Setting**: Always set 86400 seconds (24 hours) for context keys
+- **Fallback Detection**: Check tool availability before attempting Redis operations
+- **Content Storage**: JSON-stringify complete findings before Redis storage
+- **Error Handling**: Gracefully fall back to direct response on Redis errors
 
 ## Summary
 
