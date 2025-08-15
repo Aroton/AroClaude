@@ -1,7 +1,7 @@
 ---
 name: code-standards-reviewer
 description: |
-  Reviews proposed file structures and architectural decisions before implementation.
+  Reviews proposed file structures and architectural decisions before implementation. MANDATORY during planning phase.
   Inputs: COMPLETE unfiltered outputs from ALL research agents, proposed changes
   Outputs: Structured assessment with file-by-file analysis and recommendations
   Use when: planning phase, architecture review, MUST include full research context

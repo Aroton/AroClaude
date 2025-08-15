@@ -67,7 +67,10 @@ Problem: Cannot show code that doesn't exist yet
 ❌ Bad: "This agent is MANDATORY and must complete all requirements"
 
 ✅ Good: "This agent provides research to support decision-making"
+✅ Good: "This agent is MANDATORY during the planning phase" (phase-specific requirement)
 ```
+
+Note: MANDATORY requirements are acceptable when scoped to specific phases or contexts, as this provides clear workflow guidance without creating impossible global requirements.
 
 ## Effective Agent Structure
 
