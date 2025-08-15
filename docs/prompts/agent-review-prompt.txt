@@ -1,0 +1,51 @@
+# Agent Improvement Analysis
+
+```
+ANALYZE @.claude/agents/aro:codebase-researcher.md
+ANALYZE @docs/AGENT_BEST_PRACTICES.md
+
+Do all analysis without subagents.
+```
+
+## Systematic Checklist Analysis
+
+### 1. Goal Verification
+- [ ] Is the goal explicitly stated?
+- [ ] Are success criteria defined?
+- [ ] Are constraints/scope boundaries clear?
+
+### 2. Best Practices Checklist
+For EACH practice in AGENT_BEST_PRACTICES.md, check:
+- [ ] Practice name: [Present/Partial/Missing]
+- [ ] If not fully present, what's the gap?
+
+### 3. Core Principles Audit
+- [ ] No contradictions - instructions don't conflict with each other?
+- [ ] Clear sequence - order of operations is explicit?
+- [ ] Defined terms - no ambiguous words without definitions?
+- [ ] Complete context - all needed files/info included?
+- [ ] Specific outputs - clear what the agent should produce?
+
+### 4. Line-by-Line Audit
+For each instruction line in the agent:
+- Does it directly serve the stated goal? If no, flag it.
+- Could it be misinterpreted? If yes, flag it.
+- Is it redundant with another instruction? If yes, flag it.
+
+### 5. Required Elements Check
+- [ ] Error handling instructions present?
+- [ ] Edge case handling defined?
+- [ ] Stop conditions specified?
+- [ ] Input validation mentioned?
+
+## Output Format
+List issues in this exact order:
+1. Missing best practices (from checklist)
+2. Structural problems (contradictions, sequence issues)
+3. Goal alignment issues (instructions not serving goal)
+4. Clarity issues (ambiguous language)
+5. Missing required elements
+
+For each issue, provide:
+- Location in file
+- Specific fix to apply
