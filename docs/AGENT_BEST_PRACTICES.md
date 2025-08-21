@@ -3,9 +3,9 @@
 ## Core Principles
 
 ### 1. Graceful Degradation Over Silent Failure
-**Problem**: Agents with strict requirements fail completely when they can't meet 100% of requirements.
+**Problem**: Agents with strict requirements fail completely when they can't meet 100% of research requirements.
 
-**Solution**: Design agents to provide partial output with clear documentation of limitations.
+**Solution**: Design agents to provide partial research output with clear documentation of limitations.
 ```markdown
 ✅ Good: "I found 3 of 5 requested patterns. Here's what I discovered..."
 ❌ Bad: [No output when unable to find all patterns]
@@ -134,17 +134,69 @@ Principle: If you research it, include it in the output. Don't leave findings in
 ### Critical Understanding
 The agent header is the **ONLY** information visible during agent selection. The description field must enable accurate selection.
 
+### YAML Frontmatter Structure
+
+All agent files must follow this exact format:
+
+```yaml
+---
+name: agent-identifier
+description: Multi-line capability description with examples using \n for line breaks and embedded <example> tags for usage scenarios. This field can include detailed examples with <commentary> sections to clarify agent usage patterns.
+tools: Tool1, Tool2, Tool3
+model: inherit
+color: green
+---
+```
+
+#### Required Fields
+
+1. **name**: kebab-case agent identifier (e.g., `code-implementation`, `codebase-researcher`)
+2. **description**: Multi-line text describing agent capabilities, usage examples, and scenarios  
+3. **tools**: Comma-separated list of required tools
+4. **model**: Either `inherit` (uses Claude Code default) or specific model (`sonnet`, `opus`)
+5. **color**: Visual category indicator (`green`, `blue`, `purple`, `orange`)
+
 ### Description Field Best Practices
 
-#### Required Structure (keep under 100 words)
+#### Format for Complex Descriptions
+Use escaped newlines (\n) and embedded examples for comprehensive agent descriptions:
+
 ```yaml
-description: |
-  [Purpose - 1 sentence with action verbs].
-  Inputs: [What caller must provide]
-  Outputs: [What agent returns]
-  Use when: [2-3 specific trigger keywords/scenarios]
-  Not for: [When NOT to use - optional but recommended]
+description: Use this agent when you need to [primary purpose]. This agent is [importance level] for [specific scenarios]. Examples:\n\n<example>\nContext: [scenario description]\nuser: "example user request"\nassistant: "example response"\n<commentary>\n[explanation of why this agent is needed]\n</commentary>\n</example>
 ```
+
+#### Description Tags and Their Usage
+
+Agent descriptions use specific XML-style tags to structure content and provide clear usage examples:
+
+**`<example>` Tag**:
+- **Purpose**: Contains complete usage scenarios showing when and how to invoke the agent
+- **Structure**: Includes Context, user input, assistant response, and commentary
+- **Usage**: Multiple examples can be included to cover different scenarios
+- **Formatting**: Must be properly escaped with `\n` for line breaks in YAML
+
+**`<commentary>` Tag**:
+- **Purpose**: Explains the reasoning behind agent selection for the given scenario
+- **Content**: Clarifies why this specific agent is needed vs. alternatives
+- **Position**: Always placed at the end of each `<example>` block
+- **Value**: Helps Claude Code understand selection criteria and agent boundaries
+
+**Additional Context Tags** (when needed):
+- **`<research phase>`**: Indicates preliminary research steps before agent invocation
+- **`<analysis phase>`**: Shows analytical work that precedes agent usage
+- **`<planning phase>`**: Documents planning activities that lead to agent selection
+
+**Example with Multiple Tags**:
+```yaml
+description: Use this agent when you need to write, create, or generate any code. Examples:\n\n<example>\nContext: User wants to refactor an existing function\nuser: "Refactor the data processing function to improve performance"\nassistant: "Let me analyze the current implementation and then refactor it."\n<analysis phase>\nassistant: "I'll now use the code-implementation agent to refactor the data processing function."\n<commentary>\nAny code modification requires the code-implementation agent to maintain standards.\n</commentary>\n</example>
+```
+
+**Tag Formatting Rules**:
+- Tags must be properly escaped in YAML strings
+- Use `\n` for line breaks within tag content
+- Maintain consistent indentation in multi-line tag blocks
+- Close all opened tags properly
+- Keep tag content concise but informative
 
 #### Writing Effective Descriptions
 
@@ -163,57 +215,77 @@ description: |
 - List specific technologies or frameworks if specialized
 - Clarify boundaries - what the agent won't do is as important
 
-#### Well-Structured Example
+#### Complete Agent Header Example
 ```yaml
-description: |
-  Researches existing codebase to provide implementation context.
-  Inputs: Feature description or code area to investigate
-  Outputs: Code examples (file:line), patterns, dependencies, schemas
-  Use when: Before implementing features, refactoring, debugging issues
-  Not for: External library research, writing code
+---
+name: codebase-researcher
+description: Use this agent when you need to thoroughly research and understand existing code before planning or implementing changes. This agent is MANDATORY during the planning phase and provides essential research before delegating implementation work to other agents. Examples:\n\n<example>\nContext: User needs to add a new feature to an existing module\nuser: "I need to add authentication to the user profile page"\nassistant: "I'll first use the codebase-researcher agent to understand the current implementation"\n<commentary>\nBefore planning any changes, the codebase-researcher must analyze the existing code structure, authentication patterns, and user profile implementation.\n</commentary>\n</example>
+tools: Read, Glob, Grep, TodoWrite, LS, mcp__sequential-thinking__sequentialthinking
+model: sonnet
+color: blue
+---
 ```
 
 This example succeeds because it:
-- Opens with action verb ("Researches") and clear purpose
-- Explicitly lists required inputs and expected outputs
-- Uses trigger keywords (implementing, refactoring, debugging)
-- Defines boundaries with "Not for" clause
+- Opens with action verb ("research") and clear purpose
+- Explicitly states when the agent is MANDATORY
+- Includes concrete usage examples with context
+- Uses trigger keywords (planning, implementing, research)
+- Defines scope with embedded examples
 
 #### Common Anti-patterns to Avoid
-```markdown
-❌ Missing inputs/outputs: "Analyzes code and provides patterns"
-❌ Too verbose: [300+ words with examples]
-❌ Vague triggers: "Use when you need code help"
-❌ No action verbs: "For code understanding"
-❌ Overly broad scope: "Handles all development tasks"
-❌ Generic descriptions: "Helps with testing" vs "Extracts acceptance criteria from tickets"
+```yaml
+❌ Missing YAML frontmatter:
+description: "Analyzes code and provides patterns"
+
+❌ Missing required fields:
+---
+name: analyzer
+description: Helps with code
+---
+
+❌ Vague descriptions without examples:
+description: "Use when you need code help"
+
+❌ No Redis tools included:
+tools: Read, Glob, Grep
+
+❌ Generic agent scope:
+description: "Handles all development tasks"
 ```
 
-#### Quick Reference Examples
-```markdown
-✅ Good: "Extracts acceptance criteria from tickets and generates test scenarios"
-❌ Bad: "Helps with testing requirements"
+#### Complete Header Formatting Guidelines
 
-✅ Good: "Use when: refactoring, performance optimization, code smell detection"
-❌ Bad: "Use when: working with code"
-
-✅ Good: "Frontend specialist for React/Vue components, CSS-in-JS, build optimization"
-❌ Bad: "Works with web technologies"
+**Multi-line Description Structure**:
+```yaml
+description: [Main purpose sentence]. This agent is [importance/requirement level] for [specific use cases]. Examples:\n\n<example>\nContext: [specific scenario]\nuser: "[example request]"\nassistant: "[example response]"\n<commentary>\n[explanation of agent selection rationale]\n</commentary>\n</example>
 ```
+
+**Tool List Requirements**:
+- Always include Redis MCP tools: `mcp__redis__get, mcp__redis__set, mcp__redis__delete`
+- List tools in logical order: core tools first, MCP tools last
+- Separate with commas and spaces for readability
+
+**Color Categories**:
+- `blue`: Research agents (codebase-researcher, tech-research-agent)
+- `green`: Implementation agents (code-implementation)
+- `purple`: Analysis agents (code-standards-reviewer)
+- `orange`: Planning agents (implementation-planner)
 
 ## Tool Dependencies
 
 ### Handle Tool Failures Gracefully
 ```markdown
-✅ Good: "If MCP server unavailable, proceed with basic analysis"
-❌ Bad: Silent failure when mcp__sequential-thinking is unreachable
+✅ Good: "If mcp__sequential-thinking unavailable, proceed with basic analysis"
+❌ Bad: Silent failure when optional MCP tools are unreachable
 ```
 
 ### Document Required vs Optional Tools
 In agent body (not header):
 ```markdown
-## Required Tools
+## Required Tools (MANDATORY)
 - Read, Glob, Grep for core functionality
+
 ## Optional Enhancements
 - mcp__sequential-thinking for complex reasoning
 ```
@@ -222,17 +294,18 @@ In agent body (not header):
 
 ### Prioritize Helpfulness
 ```markdown
-"Partial information is better than no information"
-"Be transparent about limitations"
+"Partial research findings are better than no information"
+"Be transparent about research limitations"
 "Focus on practical application"
 ```
 
 ### Progressive Enhancement
 ```markdown
-1. Provide minimum viable answer
+1. Provide minimum viable research findings
 2. Add detail where available
 3. Suggest next steps for gaps
 ```
+
 
 ## Testing Agent Definitions
 
@@ -274,111 +347,10 @@ Before deploying an agent, verify:
 ## Context-Passing Protocol
 
 ### Overview
-To improve agent communication, reduce token usage, and preserve plan mode, agents use Redis-based context storage with graceful fallback to direct responses.
+Agents provide complete context directly in their responses to ensure continuity between phases.
 
-### Redis Context Loading Protocol (MANDATORY)
-
-**ALL agents MUST load Redis context as their FIRST action before any processing:**
-
-#### Phase 0: Context Loading (Required First Step)
-1. **Check for Redis Keys**: Scan prompt for Redis context keys (format: `claude:context:*`)
-2. **Load Context**: If keys found, use `mcp__redis__get` to retrieve ALL contexts
-3. **Validate Context**: Ensure context loaded successfully or document failures  
-4. **Fallback**: If Redis unavailable, look for direct context in prompt
-5. **Proceed**: Only continue to next phase after context loading complete
-
-**Context Sources to Check**:
-- Previous research agents (codebase-researcher, tech-research-agent)
-- Previous review agents (code-standards-reviewer)  
-- Parent agent context keys
-- Direct context provided in prompt
-
-**Implementation in Agent Definitions**:
-```markdown
-## Phase 0: Context Loading (MANDATORY FIRST STEP)
-
-Before any other processing, load all available context:
-
-1. **Scan for Redis Keys**: Look for context keys in format `claude:context:{agent-name}:{timestamp}`
-2. **Retrieve Context**: Use `mcp__redis__get` to load each context key found
-3. **Document Results**: Note successful loads and any failures
-4. **Fallback Check**: If no Redis keys, check for direct context in prompt
-5. **Validation**: Ensure context loaded before proceeding to main tasks
-
-**Only proceed to Phase 1 after context loading is complete.**
-```
-
-### Redis Storage Strategy (Preferred)
-- **Storage Method**: Redis MCP server with TTL-based auto-cleanup
-- **Key Pattern**: `claude:context:{agent-name}:{timestamp}`
-  - Example: `claude:context:codebase-researcher-20250115-143456`
-  - Example: `claude:context:tech-research-agent-20250115-143457`
-- **TTL**: 86400 seconds (24 hours) for automatic cleanup
-- **Content**: JSON-stringified complete research findings
-- **Plan Mode**: **Preserved** (no file writes that exit plan mode)
-
-### Fallback Strategy (Redis Unavailable)
-- **Detection**: Check for `mcp__redis__set` tool availability
-- **Storage Method**: Return complete context directly in response
-- **Benefits**: Full functionality maintained with larger token usage
-- **Plan Mode**: **Preserved** (no file writes)
-
-### Agent Responsibilities
-
-#### Research Agents (codebase-researcher, tech-research-agent)
-**Context Output**:
-- **Primary**: Use `mcp__redis__set` to store findings with 24-hour TTL
-- **Fallback**: Include complete research in response when Redis unavailable
-- **Return Format**: "Research completed. Context stored in Redis: claude:context:{agent}-{timestamp}"
-- **Content**: ALL research findings: patterns, code examples, dependencies, constraints
-
-**Context Input**:
-- **Redis**: Use `mcp__redis__get` to retrieve previous research
-- **Direct**: Accept context provided directly in agent prompt
-- **Integration**: Build upon existing context rather than duplicating research
-
-#### Implementation Agents (code-implementation, code-standards-reviewer)
-**Context Input**:
-- **Redis**: Use `mcp__redis__get` to retrieve research context using provided keys
-- **Direct**: Accept complete context provided directly in agent prompt
-- **Usage**: Use context to inform all implementation and review decisions
-
-**Context Output** (when applicable):
-- **Primary**: Store review/implementation notes in Redis
-- **Fallback**: Return results directly in response
-- **Chaining**: Pass Redis keys to downstream agents
-
-### Workflow Example
-```
-1. Parent: "Research button implementation patterns"
-2. codebase-researcher:
-   - Stores findings in Redis: claude:context:codebase-researcher-20250115-143456
-   - Returns: "Research completed. Context stored in Redis: claude:context:codebase-researcher-20250115-143456"
-3. Parent: Creates plan incorporating research
-4. Parent: "Review this plan" + Redis key
-5. code-standards-reviewer:
-   - Retrieves context: mcp__redis__get(claude:context:codebase-researcher-20250115-143456)
-   - Stores review: claude:context:code-standards-reviewer-20250115-143457
-   - Returns: "Review completed. Context stored in Redis: claude:context:code-standards-reviewer-20250115-143457"
-```
-
-### Benefits Over File-Based Storage
-- **Plan Mode Preservation**: No Write tool usage that exits plan mode
-- **Performance**: Faster in-memory context access via Redis
-- **Auto-cleanup**: TTL-based expiration prevents accumulation
-- **Clean Architecture**: No temporary files in repository
-- **Token Efficiency**: Reduces context size in agent communication
-- **Complete Preservation**: No truncation of research findings
-- **Context Reuse**: Multiple agents can access same research
-- **Graceful Degradation**: Full functionality when Redis unavailable
-
-### Implementation Guidelines
-- **Tool Requirements**: Add `mcp__redis__get`, `mcp__redis__set`, `mcp__redis__delete` to agent tool lists
-- **Key Format**: Use consistent timestamp format: YYYYMMDD-HHMMSS
-- **TTL Setting**: Always set 86400 seconds (24 hours) for context keys
-- **Fallback Detection**: Check tool availability before attempting Redis operations
-- **Content Storage**: JSON-stringify complete findings before Redis storage
-- **Error Handling**: Gracefully fall back to direct response on Redis errors
+### Context Flow
+Agents include all research findings, analysis results, and implementation context directly in their responses. This ensures subsequent agents have access to previous work without requiring external storage.
 
 ## Summary
 
