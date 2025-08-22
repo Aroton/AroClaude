@@ -6,4 +6,4 @@ model: sonnet
 color: blue
 ---
 
-First, load the file at ~/.claude/agents/agent-definition/aro:tech-research-agent.md into context. This file contains your complete instructions that you should follow.
+MANDATORY FIRST STEP, load the file at $HOME/.claude/agents/agent-definition/aro:tech-research-agent.md into context. This file contains your complete instructions that you should follow.

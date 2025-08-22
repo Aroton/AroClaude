@@ -15,6 +15,7 @@ This script copies all configuration files from `.claude/` to your `~/.claude/` 
 
 | Command | Purpose | Type |
 |---------|---------|------|
+| [`/aro:plan`](#aroplan) | Comprehensive project planning workflow with AI agents | Project Planning |
 | [`/code:analyze`](#codeanalyze) | Analyze code changes to update documentation | Documentation |
 | [`/code:cleanup`](#codecleanup) | Remove deprecated code and unused dependencies | Code Maintenance |
 | [`/code:fix`](#codefix) | Diagnose and fix bugs through test-driven approach | Bug Fixing |
@@ -29,15 +30,18 @@ The `.claude/` directory contains:
 
 ```
 .claude/
-├── agents/                     # Specialized agent definitions (7 agents)
-│   ├── aro:acceptance-criteria-agent.md
-│   ├── aro:architecture-designer.md
-│   ├── aro:automated-code-reviewer.md
+├── agents/                     # Specialized agent definitions (9 agents)
+│   ├── aro:agent-haiku.md      # Generic Haiku model agent
+│   ├── aro:agent-opus.md       # Generic Opus model agent  
+│   ├── aro:agent-sonnet.md     # Generic Sonnet model agent
 │   ├── aro:code-implementation.md
 │   ├── aro:codebase-researcher.md
-│   ├── aro:implementation-planner.md
+│   ├── aro:plan-compiler.md    # Creates comprehensive development plans
+│   ├── aro:plan-reviewer.md    # Reviews development plans
+│   ├── aro:question-generator.md # Generates targeted requirement questions
 │   └── aro:tech-research-agent.md
-├── commands/                   # Custom slash commands (7 commands)
+├── commands/                   # Custom slash commands (8 commands)
+│   ├── aro:plan.md            # NEW: Comprehensive planning workflow
 │   ├── code:analyze.md
 │   ├── code:cleanup.md
 │   ├── code:fix.md
@@ -50,6 +54,28 @@ The `.claude/` directory contains:
 
 ## Available Commands
 
+### `/aro:plan`
+
+Execute a comprehensive project planning workflow using AI agents and persistent memory to analyze requirements, research codebase, and deliver a reviewed development plan.
+
+**Usage:**
+- `/aro:plan` - Start the complete planning workflow
+- `/aro:plan [project description]` - Start with initial project context
+
+**Key Features:**
+- Multi-agent workflow with persistent memory operations
+- Comprehensive requirements gathering through targeted questions
+- Codebase research and technical analysis
+- Phased implementation planning with review validation
+- Memory-driven context sharing between agents
+
+**Process:**
+1. **Requirements Analysis** - Generate targeted questions to clarify project scope
+2. **Codebase Research** - Analyze existing architecture and integration points  
+3. **Plan Compilation** - Create structured implementation plan with phases
+4. **Plan Review** - Validate plan against best practices and feasibility
+5. **Final Delivery** - Provide comprehensive development roadmap
+
 ### `/code:analyze`
 
 Analyzes code changes or entire codebase to automatically update acceptance criteria and codebase documentation using specialized agents.
@@ -61,7 +87,7 @@ Analyzes code changes or entire codebase to automatically update acceptance crit
 - `/code:analyze --from [ref1] --to [ref2]` - Analyze changes between two references
 
 **Key Features:**
-- Delegates to specialized agents (acceptance-criteria-agent and codebase-specialist)  
+- Delegates to specialized agents (acceptance-criteria-agent and codebase-specialist)
 - Batches files for efficient analysis (50-100 files per batch)
 - Analyzes entire codebase when on main branch
 - Focuses on changes when on feature branches
@@ -224,66 +250,19 @@ Simplifies code complexity while maintaining functionality through AI validation
 Agents are categorized by their primary function and assigned colors for visual organization:
 
 | Color | Category | Purpose |
-|-------|----------|---------|  
+|-------|----------|---------|
 | 🟢 **Green** | Authoring Agents | Create and implement code/tests |
-| 🔵 **Blue** | Research Agents | Analyze and document systems |
-| 🟣 **Purple** | Analysis Agents | Review and extract requirements |
+| 🔵 **Blue** | Research/Review Agents | Analyze and document systems, review plans |
+| 🟣 **Purple** | Analysis/Planning Agents | Extract requirements, compile plans, generate questions |
 | 🔴 **Red** | *Reserved* | Error handling/critical operations |
-| 🟡 **Yellow** | *Reserved* | Monitoring/alerting systems |
-| 🟠 **Orange** | Planning/Architecture Agents | Design implementations and system architecture |
+| 🟡 **Yellow** | Generic Model Agents | Generic Model Agents - Opus/Sonnet/Haiku |
+| 🟠 **Orange** | *Reserved* | Architecture agents (future) |
 | 🩷 **Pink** | *Reserved* | User experience/interface agents |
 | 🩵 **Cyan** | *Reserved* | Data processing/transformation |
 
 ## Specialized Agents
 
 The following specialized agents are available to assist with specific development tasks:
-
-### 🟣 `aro:acceptance-criteria-agent` (Analysis)
-**Purpose**: Extracts and documents acceptance criteria from requirements or code. Analyzes implementations and creates structured acceptance criteria that remain synchronized with the codebase.
-
-**Key Capabilities**:
-- Extracts testable requirements from code implementations
-- Documents acceptance criteria in Given-When-Then format
-- Maintains criteria files in `documentation/agents/acceptance-criteria/`
-- Updates existing criteria rather than creating duplicates
-- Captures edge cases, validation rules, and business logic
-
-**Usage Examples**:
-- Planning new features: "What should I consider for a user notification system?"
-- Clarifying vague requirements: "What does 'better search functionality' mean?"
-- Documenting existing code: "This code has no requirements documentation"
-
-### 🟣 `aro:automated-code-reviewer` (Analysis)
-**Purpose**: Performs comprehensive code reviews for security, performance, and quality. Analyzes code changes beyond basic linting, validating against documented standards and checking for architectural compliance.
-
-**Key Capabilities**:
-- Security vulnerability analysis (OWASP guidelines, injection attacks, etc.)
-- Performance evaluation and optimization suggestions
-- Code quality assessment (SOLID principles, complexity metrics)
-- Architectural compliance validation
-- Integration with MCP-connected tools for real-time insights
-- Categorized feedback (Critical, Major, Minor, Positive)
-
-**Usage Examples**:
-- Pre-merge reviews: "Review my user management feature implementation"
-- Security audits: "Check this API endpoint for security vulnerabilities"
-- Performance validation: "Did my refactoring improve performance?"
-
-### 🔵 `aro:codebase-researcher` (Research)
-**Purpose**: Thoroughly researches and understands existing code before planning or implementing changes. This agent is MANDATORY for all planning stages and must be used before delegating implementation work to other agents.
-
-**Key Capabilities**:
-- Systematic code analysis with complete structure mapping
-- Dependency mapping (internal and external)
-- Pattern recognition and architectural decision documentation
-- Context extraction for business logic and edge cases
-- Provides exhaustive research for delegation to implementation agents
-- Creates actionable intelligence with specific files and functions to modify
-
-**Usage Examples**:
-- Feature planning: "Research the current authentication implementation before adding OAuth"
-- Refactoring: "Analyze the payment module structure before performance improvements"
-- Debugging: "Investigate the synchronization code and its dependencies"
 
 ### 🟢 `aro:code-implementation` (Authoring)
 **Purpose**: MANDATORY agent for ALL code writing activities. Translates technical requirements into production-ready code after research has been completed by tech-research-agent and/or codebase-researcher agents.
@@ -301,6 +280,22 @@ The following specialized agents are available to assist with specific developme
 - Refactoring: "Refactor data processing function for performance"
 - Utility functions: "Write email validation function"
 
+### 🔵 `aro:codebase-researcher` (Research)
+**Purpose**: Thoroughly researches and understands existing code before planning or implementing changes. This agent is MANDATORY for all planning stages and must be used before delegating implementation work to other agents.
+
+**Key Capabilities**:
+- Systematic code analysis with complete structure mapping
+- Dependency mapping (internal and external)
+- Pattern recognition and architectural decision documentation
+- Context extraction for business logic and edge cases
+- Uses serenna memory operations for persistent context
+- Creates actionable intelligence with specific files and functions to modify
+
+**Usage Examples**:
+- Feature planning: "Research the current authentication implementation before adding OAuth"
+- Refactoring: "Analyze the payment module structure before performance improvements"
+- Debugging: "Investigate the synchronization code and its dependencies"
+
 ### 🔵 `aro:tech-research-agent` (Research)
 **Purpose**: MANDATORY first-line resource for investigating technology-related questions, third-party libraries, framework patterns, and dependencies. Must be invoked before making any implementation decisions involving external libraries or frameworks.
 
@@ -317,38 +312,101 @@ The following specialized agents are available to assist with specific developme
 - Type definitions: "What are the TypeScript types for axios response?"
 - Dependencies: "What peer dependencies does @mui/material require?"
 
-### 🟠 `aro:implementation-planner` (Planning/Architecture)
-**Purpose**: Creates phased implementation roadmaps synthesizing research, architecture, and requirements. Transforms complex technical challenges into manageable execution strategies with clear dependencies and risk mitigation.
+### 🟣 `aro:plan-compiler` (Analysis/Planning)
+**Purpose**: Creates comprehensive development plans from research and requirements. Structures phased implementation strategies with technical architecture decisions. Can also refine plans based on review feedback.
 
 **Key Capabilities**:
 - Multi-input synthesis (research, requirements, constraints)
-- Dependency mapping and bottleneck identification
-- Risk assessment and mitigation strategies
 - Phased implementation design with clear objectives
-- Parallel work stream optimization
-- Documentation in `documentation/agents/implementation/`
+- Memory operations for context persistence
+- Technical architecture decision documentation
+- Plan refinement based on review feedback
+- Integration with codebase research findings
 
 **Usage Examples**:
-- OAuth2 integration: "Create a plan based on research and our session architecture"
-- Microservices migration: "Plan phased migration from monolith with rollback options"
-- Complex feature implementation: "Design roadmap for multi-tenant architecture"
+- Complex feature planning: "Compile a plan for OAuth integration based on research"
+- Architecture decisions: "Create implementation plan for microservices migration"
+- Feature roadmaps: "Plan multi-phase rollout for new payment system"
 
-### 🟠 `aro:architecture-designer` (Planning/Architecture)
-**Purpose**: Creates comprehensive architectural blueprints synthesizing research and requirements. Specializes in system architecture patterns, technology stack selection, and scalable solution design.
+### 🔵 `aro:plan-reviewer` (Review)
+**Purpose**: Reviews development plans against best practices, standards, and feasibility criteria. Evaluates technical decisions, identifies risks, and provides specific improvement recommendations.
 
 **Key Capabilities**:
-- System architecture design with component boundaries
-- Technology stack selection with justified decisions
-- Integration pattern specification
-- Security architecture and threat modeling
-- Scalability planning (horizontal/vertical)
-- Architecture Decision Records (ADRs)
-- Visualization with architecture diagrams
+- Plan validation against technical standards
+- Risk assessment and mitigation identification
+- Best practices compliance checking
+- Feasibility analysis for proposed implementations
+- Specific improvement recommendations
+- Standards compliance verification using MCP tools
 
 **Usage Examples**:
-- Payment system design: "Design architecture based on Stripe integration research"
-- Real-time systems: "Create architecture for 100k concurrent connections"
-- System redesign: "Architect microservices migration strategy"
+- Plan validation: "Review this OAuth implementation plan for risks"
+- Standards checking: "Validate plan compliance with security standards"
+- Feasibility assessment: "Check if this migration plan is realistic"
+
+### 🟣 `aro:question-generator` (Analysis)
+**Purpose**: Analyzes project goals and generates targeted questions for requirements gathering. Creates comprehensive question sets that uncover hidden complexity, technical constraints, and edge cases.
+
+**Key Capabilities**:
+- Requirements clarification through targeted questioning
+- Edge case discovery through systematic inquiry
+- Technical constraint identification
+- Complexity uncovering through strategic questions
+- Memory operations for context-aware questioning
+- Integration with project goal analysis
+
+**Usage Examples**:
+- Requirements gathering: "Generate questions to clarify authentication requirements"
+- Feature planning: "What should I ask about this payment integration?"
+- Scope definition: "Help uncover the complexity of this migration project"
+
+### 🟡 `aro:agent-haiku` (Generic)
+**Purpose**: Generic task execution agent using Claude 3.5 Haiku model for fast, efficient operations. Ideal for simple tasks, memory operations, basic analysis, and high-volume operations where cost-efficiency is important.
+
+**Key Capabilities**:
+- Fast execution for simple tasks
+- Cost-efficient operations
+- Basic analysis and documentation
+- Memory operations support
+- High-volume task processing
+- Quick file operations and basic research
+
+**Usage Examples**:
+- Simple tasks: "Update this configuration file"
+- Basic analysis: "Summarize these log files"
+- Memory operations: "Load and save context data"
+
+### 🟡 `aro:agent-sonnet` (Generic)
+**Purpose**: Generic task execution agent using Claude 4 Sonnet model for balanced performance. Ideal for complex reasoning, research, analysis, and compilation tasks requiring sophisticated understanding.
+
+**Key Capabilities**:
+- Complex reasoning and analysis
+- Research and investigation tasks
+- Balanced performance for most operations
+- Web search and fetch capabilities
+- Memory operations support
+- Compilation and synthesis tasks
+
+**Usage Examples**:
+- Research tasks: "Investigate this library's API patterns"
+- Analysis: "Analyze this codebase architecture"
+- Compilation: "Synthesize findings into a report"
+
+### 🟡 `aro:agent-opus` (Generic)
+**Purpose**: Generic task execution agent using Claude 4.1 Opus model for premium quality outputs. Reserved for critical decisions, final reviews, synthesis, and high-stakes user-facing operations.
+
+**Key Capabilities**:
+- Premium quality analysis and decisions
+- Critical task execution
+- Final review and validation
+- High-stakes operations
+- Complex synthesis and compilation
+- User-facing deliverable creation
+
+**Usage Examples**:
+- Critical decisions: "Make final architecture choice for production system"
+- Final reviews: "Perform final validation of security implementation"
+- High-stakes delivery: "Create client-facing technical proposal"
 
 ## CLAUDE.md Section for Other Projects
 
@@ -361,22 +419,26 @@ This project benefits from specialized agents that provide battle-tested pattern
 
 ## Available Agents
 
-### Implementation & Architecture Agents
+### Core Development Agents
 - **@aro:code-implementation**: MANDATORY for all code writing. Creates production-ready implementations with quality assurance.
 - **@aro:tech-research-agent**: MANDATORY first-line for technology questions. Researches libraries, frameworks, and best practices.
 - **@aro:codebase-researcher**: MANDATORY for planning stages. Maps architecture and provides comprehensive context.
-- **@aro:implementation-planner**: Creates phased implementation roadmaps from research and requirements.
-- **@aro:architecture-designer**: Designs comprehensive system architectures from requirements and research.
 
-### Testing & Quality Agents
-- **@aro:acceptance-criteria-agent**: Generates testable acceptance criteria from code or requirements. Maintains living documentation synchronized with implementation.
-- **@aro:automated-code-reviewer**: Performs security and quality analysis. Reviews code against best practices, identifies vulnerabilities, and suggests improvements.
+### Planning & Analysis Agents
+- **@aro:plan-compiler**: Creates comprehensive development plans from research and requirements.
+- **@aro:plan-reviewer**: Reviews development plans against best practices and feasibility criteria.
+- **@aro:question-generator**: Generates targeted questions for requirements gathering and complexity discovery.
+
+### Generic Model Agents
+- **@aro:agent-haiku**: Fast, cost-efficient operations using Claude 3.5 Haiku.
+- **@aro:agent-sonnet**: Balanced performance for complex reasoning using Claude 4 Sonnet.
+- **@aro:agent-opus**: Premium quality for critical decisions using Claude 4.1 Opus.
 
 ## AI Validation Workflow
 
 These agents work together in a streamlined AI validation development flow:
 
-1. **Requirements Analysis**: The @aro:acceptance-criteria-agent analyzes requirements or existing code to generate clear acceptance criteria.
+1. **Requirements Analysis**: The @aro:question-generator creates targeted questions to clarify project scope and uncover complexity.
 
 2. **Research**: The @aro:tech-research-agent and @aro:codebase-researcher gather necessary context and patterns.
 3. **Implementation**: The @aro:code-implementation agent creates production-ready code with:
@@ -389,9 +451,9 @@ These agents work together in a streamlined AI validation development flow:
    - Edge case coverage where needed
    - Integration point validation
 
-5. **Review**: The @aro:automated-code-reviewer performs quality checks for security, performance, and maintainability.
+5. **Planning**: The @aro:plan-compiler creates comprehensive development plans from research findings.
 
-6. **Architecture Planning**: For complex features, @aro:implementation-planner and @aro:architecture-designer provide structured guidance.
+6. **Review**: The @aro:plan-reviewer validates plans against best practices and feasibility criteria.
 
 ## Agent Philosophy
 
@@ -401,15 +463,15 @@ These agents work together in a streamlined AI validation development flow:
 - **Research First**: Analyze multiple approaches before recommending solutions
 - **Aggressive Deletion**: Remove obsolete code when backwards compatibility isn't needed
 - **Rapid Development**: Focus on delivering working solutions fast
-- **Living Documentation**: Acceptance criteria stay synchronized with code
+- **Memory-Driven Context**: Persistent memory operations enable context sharing between agents
 
 ## Best Practices
 
-1. **Clear Acceptance Criteria**: Start with well-defined requirements
+1. **Clear Requirements**: Start with targeted questions to uncover project complexity
 2. **Implementation-First Development**: Build working solutions, then add minimal validation
 3. **Small Iterations**: Work in small, verifiable increments
 4. **Minimal Testing**: Only test what's critical to prevent major failures
-5. **Documentation as Code**: Keep acceptance criteria in version control
+5. **Memory Operations**: Leverage persistent memory for context continuity between agents
 
 The agents excel at rapid, practical development. They follow an efficient approach that prioritizes shipping working features with just enough validation to prevent AI-generated errors.
 ```
