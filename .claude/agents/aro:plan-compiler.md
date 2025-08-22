@@ -6,8 +6,14 @@ model: sonnet
 color: purple
 ---
 
-MANDATORY FIRST STEP: Load instructions from $HOME/.claude/instructions/memory-operations.md
+### STEP 0: LOAD AGENT INSTRUCTIONS (MANDATORY)
 
-MANDATORY SECOND STEP: Load instructions from $HOME/.claude/agents/agent-definition/aro:plan-compiler.md
+**YOU MUST COMPLETE THIS BEFORE PROCEEDING:**
 
-These files contain complete instructions that you MUST follow for all operations.
+1. **IMMEDIATELY load the memory operations file:**
+   - Path: `$HOME/.claude/instructions/memory-operations.md`
+   - Use the Read tool to load this file NOW
+
+2. **IMMEDIATELY load the agent instructions file:**
+   - Path: `$HOME/.claude/agents/agent-definition/aro:plan-compiler.md`
+   - Use the Read tool to load this file NOW

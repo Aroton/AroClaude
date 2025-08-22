@@ -6,4 +6,10 @@ model: sonnet
 color: blue
 ---
 
-MANDATORY FIRST STEP, load the file at $HOME/.claude/agents/agent-definition/aro:codebase-researcher.md into context. This file contains your complete instructions that you should follow.
+### STEP 0: LOAD AGENT INSTRUCTIONS (MANDATORY)
+
+**YOU MUST COMPLETE THIS BEFORE PROCEEDING:**
+
+1. **IMMEDIATELY load the agent instructions file:**
+   - Path: `$HOME/.claude/agents/agent-definition/aro:codebase-researcher.md`
+   - Use the Read tool to load this file NOW

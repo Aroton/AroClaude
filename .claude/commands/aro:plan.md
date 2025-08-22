@@ -47,7 +47,7 @@ steps:
   # Step 2: Analyze and ask top 10 questions
   - id: analyze_and_question
     name: "Analyze the project goal and Generate Questions"
-    description: "Analyze the the project goal and ask the top 10 clarifying questions"
+    description: "Analyze the the project goal and ask the top clarifying questions"
     agent: "@agent-question-generator"
     depends_on:
       - ask_project_goal
@@ -55,10 +55,9 @@ steps:
     input:
       task:
         prompt: |
-          Based on the project goal, generate the top 10 most important questions
+          Based on the project goal, generate the top questions neccessary
           that need to be answered to create a comprehensive plan. These should be
-          specific, actionable questions about technical requirements, constraints,
-          architecture decisions, and success criteria.
+          specific questions with options. These should NOT be questions about what the current implementation is.
         context: "Focus on questions that will uncover hidden complexity and requirements"
 
     memory:
