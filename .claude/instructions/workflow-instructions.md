@@ -34,9 +34,9 @@ FOR each step in workflow.steps (respecting depends_on order):
      b. Present exact prompt from from_user.prompt to user
      c. WAIT for user response (do not continue)
      d. Save response to memory if memory.save_as specified
-  3. Load required memories using Serenna MCP API (if any)
+  3. Load required memories using Serena MCP API (if any)
   4. Execute the agent or task
-  5. Save output to memory using Serenna MCP API
+  5. Save output to memory using Serena MCP API
   6. Update TodoWrite: Mark current step as "completed"
   7. Update TodoWrite: Mark next step as "in_progress" (if exists)
   8. Proceed to next step (NEVER stop until outputs: section)
@@ -75,9 +75,9 @@ When a step does NOT specify an agent, determine the execution method:
 - **Handle user interaction first** (section 2.5)
 - **Then execute task** using the prompt and user response context
 
-#### 4. **Memory Operations via Serenna MCP**
+#### 4. **Memory Operations via Serena MCP**
 
-All memory operations MUST go through Serenna MCP APIs.
+All memory operations MUST go through Serena MCP APIs.
 
 - **Reading Memory**:
   - When you see `from_memory: [memory_name]`
@@ -88,7 +88,7 @@ All memory operations MUST go through Serenna MCP APIs.
   - Use: `write_memory(memory_name, content, type)`
 
 - **Memory Types for Writing**:
-  - `summary`: Use Serenna's summarization tool before saving
+  - `summary`: Use Serena's summarization tool before saving
   - `full`: Save complete output
   - `structured`: Format content then save
 
@@ -125,7 +125,7 @@ The orchestrator automatically injects memory instructions based on workflow ste
 [Original task.prompt content]
 
 [AUTO-INJECTED MEMORY INSTRUCTIONS]
-MANDATORY: Load these keys from memory using Serenna memory tool:
+MANDATORY: Load these keys from memory using Serena memory tool:
 - input_key1
 - input_key2
 
@@ -142,7 +142,7 @@ def build_agent_prompt(step):
 
     # Auto-inject memory instructions
     if step.input.from_memory:
-        prompt += "\n\nMANDATORY: Load these keys from memory using Serenna memory tool:\n"
+        prompt += "\n\nMANDATORY: Load these keys from memory using Serena memory tool:\n"
         for key in step.input.from_memory:
             prompt += f"- {key}\n"
 
@@ -212,7 +212,7 @@ step:
 **THIS IS THE ONLY PLACE TO PRESENT FINAL OUTPUT TO THE USER**
 
 - After ALL workflow steps are complete, prepare the outputs specified in the `outputs` section
-- Read the specified memories using Serenna MCP APIs
+- Read the specified memories using Serena MCP APIs
 - Format them according to the `format` field
 - Present the final outputs to the user
 
@@ -263,9 +263,9 @@ Given the planning workflow below, execute it as follows:
    - Format according to outputs specification
    - Present final deliverable to user
 
-### Serenna MCP API Operations
+### Serena MCP API Operations
 
-Use these Serenna MCP operations:
+Use these Serena MCP operations:
 
 - **`read_memory(memory_name)`** - Read a memory file
 - **`write_memory(memory_name, content, type)`** - Write content to memory
@@ -284,7 +284,7 @@ Use these Serenna MCP operations:
 ### Command Pattern
 
 1. Parse this workflow
-2. Use Serenna MCP APIs for all memory operations
+2. Use Serena MCP APIs for all memory operations
 3. Execute each step using the appropriate tools/agents
 4. Continue until all steps are complete
 5. Present the final output

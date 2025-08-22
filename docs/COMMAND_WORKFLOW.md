@@ -1,4 +1,4 @@
-# AI Agent Workflow YAML Schema with Serenna MCP
+# AI Agent Workflow YAML Schema with Serena MCP
 
 ## Workflow Execution Instructions
 
@@ -18,9 +18,9 @@ Follow this process for each step in order:
 ```
 FOR each step in workflow.steps (respecting depends_on order):
   1. Check dependencies are complete
-  2. Load required memories using Serenna MCP API (if any)
+  2. Load required memories using Serena MCP API (if any)
   3. Execute the agent or task
-  4. Save output to memory using Serenna MCP API
+  4. Save output to memory using Serena MCP API
   5. Handle any errors according to on_error rules
   6. Proceed to next step
 ```
@@ -31,9 +31,9 @@ FOR each step in workflow.steps (respecting depends_on order):
 - Pass all specified inputs to the agent/task
 - Ensure the agent has access to all memories listed in `from_memory`
 
-#### 4. **Memory Operations via Serenna MCP**
+#### 4. **Memory Operations via Serena MCP**
 
-All memory operations MUST go through Serenna MCP APIs.
+All memory operations MUST go through Serena MCP APIs.
 
 - **Reading Memory**:
   - When you see `from_memory: [memory_name]`
@@ -44,7 +44,7 @@ All memory operations MUST go through Serenna MCP APIs.
   - Use: `write_memory(memory_name, content, type)`
 
 - **Memory Types for Writing**:
-  - `summary`: Use Serenna's summarization tool before saving
+  - `summary`: Use Serena's summarization tool before saving
   - `full`: Save complete output
   - `structured`: Format content then save
 
@@ -63,7 +63,7 @@ All memory operations MUST go through Serenna MCP APIs.
 
 #### 7. **Workflow Completion**
 - After all steps are complete, prepare the outputs specified in the `outputs` section
-- Read the specified memories using Serenna MCP APIs
+- Read the specified memories using Serena MCP APIs
 - Format them according to the `format` field
 - Present the final outputs to the user
 
@@ -94,9 +94,9 @@ Given the planning workflow below, execute it as follows:
    - Read: `read_memory("final_plan")`, `read_memory("plan_review")`
    - Format and present to user
 
-### Serenna MCP API Operations
+### Serena MCP API Operations
 
-Use these Serenna MCP operations:
+Use these Serena MCP operations:
 
 - **`read_memory(memory_name)`** - Read a memory file
 - **`write_memory(memory_name, content, type)`** - Write content to memory
@@ -113,14 +113,14 @@ Use these Serenna MCP operations:
 ### Command Pattern
 
 1. Parse this workflow
-2. Use Serenna MCP APIs for all memory operations
+2. Use Serena MCP APIs for all memory operations
 3. Execute each step using the appropriate tools/agents
 4. Continue until all steps are complete
 5. Present the final output
 
 ## Schema Overview
 
-This YAML schema provides a standardized format for sequential AI agent workflows using Serenna MCP memories for data persistence and sharing between steps.
+This YAML schema provides a standardized format for sequential AI agent workflows using Serena MCP memories for data persistence and sharing between steps.
 
 ## Core Schema Structure
 
@@ -149,7 +149,7 @@ steps:
         prompt: string          # Question to ask the user
         type: string            # "text" | "number" | "boolean" | "choice"
 
-      # From Serenna memories
+      # From Serena memories
       from_memory:
         - memory_name           # Name of memory file to read (without path)
 
@@ -369,7 +369,7 @@ outputs:
     description: "Review feedback and compliance notes"
 ```
 
-## Using Serenna Memories
+## Using Serena Memories
 
 ### Memory Storage
 ```yaml

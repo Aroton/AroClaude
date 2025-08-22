@@ -32,7 +32,7 @@ The `.claude/` directory contains:
 .claude/
 ├── agents/                     # Specialized agent definitions (9 agents)
 │   ├── aro:agent-haiku.md      # Generic Haiku model agent
-│   ├── aro:agent-opus.md       # Generic Opus model agent  
+│   ├── aro:agent-opus.md       # Generic Opus model agent
 │   ├── aro:agent-sonnet.md     # Generic Sonnet model agent
 │   ├── aro:code-implementation.md
 │   ├── aro:codebase-researcher.md
@@ -71,7 +71,7 @@ Execute a comprehensive project planning workflow using AI agents and persistent
 
 **Process:**
 1. **Requirements Analysis** - Generate targeted questions to clarify project scope
-2. **Codebase Research** - Analyze existing architecture and integration points  
+2. **Codebase Research** - Analyze existing architecture and integration points
 3. **Plan Compilation** - Create structured implementation plan with phases
 4. **Plan Review** - Validate plan against best practices and feasibility
 5. **Final Delivery** - Provide comprehensive development roadmap
@@ -288,7 +288,7 @@ The following specialized agents are available to assist with specific developme
 - Dependency mapping (internal and external)
 - Pattern recognition and architectural decision documentation
 - Context extraction for business logic and edge cases
-- Uses serenna memory operations for persistent context
+- Uses Serena memory operations for persistent context
 - Creates actionable intelligence with specific files and functions to modify
 
 **Usage Examples**:

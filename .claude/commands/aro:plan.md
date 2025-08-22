@@ -44,71 +44,127 @@ steps:
       save_as: "aro:plan:project_goal"
       type: summary
 
-  # Step 2: Analyze and ask top 10 questions
-  - id: analyze_and_question
-    name: "Analyze the project goal and Generate Questions"
-    description: "Analyze the the project goal and ask the top clarifying questions"
-    agent: "@agent-question-generator"
+  # Step 2: Generate Initial Research Questions
+  - id: generate_initial_research_questions
+    name: "Generate Initial Research Questions"
+    description: "Create internal questions to guide initial codebase research"
     depends_on:
       - ask_project_goal
 
     input:
       task:
         prompt: |
-          Based on the project goal, generate the top questions neccessary
-          that need to be answered to create a comprehensive plan. These should be
-          specific questions with options. These should NOT be questions about what the current implementation is.
-        context: "Focus on questions that will uncover hidden complexity and requirements"
+          Based on the project goal, generate internal research questions that will help
+          understand the current codebase before asking the user clarifying questions.
+          Focus on:
+          - What architecture patterns might be relevant
+          - What existing implementations to look for
+          - What dependencies and frameworks to investigate
+          - What configuration and deployment aspects to examine
+        context: "These questions will guide initial codebase research to inform better user questions"
 
     memory:
-      save_as: "aro:plan:project_questions"
+      save_as: "aro:plan:initial_research_questions"
+      type: structured
+
+  # Step 3: Initial Codebase Research
+  - id: initial_codebase_research
+    name: "Initial Codebase Research"
+    description: "Quick research pass to understand existing codebase patterns and architecture"
+    agent: "@agent-codebase-researcher"
+    depends_on:
+      - generate_initial_research_questions
+
+    input:
+      task:
+        prompt: |
+          Perform an initial scan of the codebase to understand existing patterns,
+          architecture, and implementations relevant to the project goal.
+          This research will inform better questions for the user.
+
+          Research Parameters:
+          - Depth: initial_scan
+          - Focus: architecture_patterns
+          - Include Dependencies: true
+        context: "Quick research to inform user question generation"
+      from_memory:
+        - "aro:plan:initial_research_questions"
+        - "aro:plan:project_goal"
+      static:
+        depth: initial_scan
+        focus: architecture_patterns
+        include_dependencies: true
+
+    memory:
+      save_as: "aro:plan:initial_codebase_research"
       type: full
 
-  # Step 3: Get User Clarifications
+  # Step 4: Generate User Questions
+  - id: generate_user_questions
+    name: "Generate Informed User Questions"
+    description: "Create user-facing questions informed by initial codebase research"
+    depends_on:
+      - initial_codebase_research
+
+    input:
+      task:
+        prompt: |
+          Based on the project goal and initial codebase research, generate the top questions
+          that need to be answered by the user to create a comprehensive plan. These should be
+          specific questions with options, informed by understanding of the existing codebase.
+          Focus on questions that will uncover hidden complexity and requirements.
+        context: "Generate informed questions based on actual codebase understanding"
+      from_memory:
+        - "aro:plan:initial_codebase_research"
+
+    memory:
+      save_as: "aro:plan:user_questions"
+      type: full
+
+  # Step 5: Get User Clarifications
   - id: get_user_clarifications
     name: "Get User Clarifications"
-    description: "Present questions to user and collect their responses"
+    description: "Present informed questions to user and collect their responses"
     depends_on:
-      - analyze_and_question
+      - generate_user_questions
 
     input:
       from_user:
-        prompt: "Based on your project goal, I've generated some important questions to ensure we create the best plan. Please provide answers to help clarify the requirements and approach."
+        prompt: "Based on your project goal and my analysis of the existing codebase, I've generated some important questions to ensure we create the best plan. Please provide answers to help clarify the requirements and approach."
         type: text
 
     memory:
       save_as: "aro:plan:user_clarifications"
       type: full
 
-  # Step 4: Compile research topics
+  # Step 6: Compile Research Topics
   - id: compile_research_topics
-    name: "Compile Research Topics"
-    description: "Create a list of specific codebase areas to research"
-    agent: "@agent-sonnet"
+    name: "Compile Comprehensive Research Topics"
+    description: "Create a comprehensive list of codebase areas to research based on user input"
     depends_on:
       - get_user_clarifications
 
     input:
       task:
         prompt: |
-          Based on the project goal, questions, and user clarifications, compile a comprehensive list
-          of research topics and areas in the codebase that need to be examined.
+          Based on the project goal, initial research, and user clarifications, compile a comprehensive list
+          of research topics and areas in the codebase that need to be examined for detailed analysis.
           Include:
           - Specific modules, classes, or functions to analyze
-          - Architecture patterns to understand
-          - Dependencies to review
+          - Architecture patterns to understand in detail
+          - Dependencies to review thoroughly
           - Configuration and deployment aspects
           - Test coverage areas
-        context: "This list will guide the codebase research phase"
+        context: "This list will guide the comprehensive codebase research phase"
 
     memory:
       save_as: "aro:plan:research_topics"
       type: structured
 
-  # Step 5: Research the codebase
-  - id: research_codebase
-    name: "Research Codebase"
-    description: "Thoroughly research the codebase based on identified topics"
+  # Step 7: Comprehensive Codebase Research
+  - id: comprehensive_codebase_research
+    name: "Comprehensive Codebase Research"
+    description: "Thoroughly research the codebase with full context"
     agent: "@agent-codebase-researcher"
     depends_on:
       - compile_research_topics
@@ -116,7 +172,7 @@ steps:
     input:
       task:
         prompt: |
-          Research the codebase based on the identified topics to understand
+          Research the codebase comprehensively based on the identified topics to understand
           the current implementation and architecture. Analyze the code structure,
           patterns, dependencies, and identify areas for improvement.
 
@@ -124,11 +180,12 @@ steps:
           - Depth: comprehensive
           - Include Dependencies: true
           - Analyze Patterns: true
-        context: "Provide detailed analysis of current codebase implementation"
+        context: "Provide detailed analysis of current codebase implementation with full context"
       from_memory:
         - "aro:plan:research_topics"
         - "aro:plan:project_goal"
         - "aro:plan:user_clarifications"
+        - "aro:plan:initial_codebase_research"
       static:
         depth: comprehensive
         include_dependencies: true
@@ -139,13 +196,13 @@ steps:
       type: full
       include_context: true
 
-  # Step 6: Compile a plan
+  # Step 8: Compile a plan
   - id: compile_plan
     name: "Create Development Plan"
     description: "Compile a comprehensive development plan based on research"
     agent: "@agent-plan-compiler"
     depends_on:
-      - research_codebase
+      - comprehensive_codebase_research
 
     input:
       task:
@@ -160,9 +217,10 @@ steps:
         context: "This should be a comprehensive, actionable development plan"
       from_memory:
         - "aro:plan:project_goal"
-        - "aro:plan:project_questions"
+        - "aro:plan:user_questions"
         - "aro:plan:user_clarifications"
         - "aro:plan:codebase_research"
+        - "aro:plan:initial_codebase_research"
       static:
         plan_format: "detailed"
         include_timeline: true
@@ -172,7 +230,7 @@ steps:
       save_as: "aro:plan:development_plan"
       type: full
 
-  # Step 7: Review the plan
+  # Step 9: Review the plan
   - id: review_plan
     name: "Review Plan Against Standards"
     description: "Review the plan for compliance with standards and best practices"
@@ -209,7 +267,7 @@ steps:
       type: structured
       include_context: false
 
-  # Step 8: Propose final plan to user
+  # Step 10: Propose final plan to user
   - id: propose_final_plan
     name: "Propose Final Plan"
     description: "Take feedback and propose a refined plan to the user"

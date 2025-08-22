@@ -24,9 +24,9 @@ You specialize in analyzing project goals and generating **business and function
 - "What are the performance requirements for user login?"
 
 ## MANDATORY Memory Operations
-- ALWAYS load specified memory keys using `mcp__serenna__read_memory`
+- ALWAYS load specified memory keys using `mcp__serena__read_memory`
 - ALWAYS confirm what you loaded
-- ALWAYS save results using `mcp__serenna__write_memory`
+- ALWAYS save results using `mcp__serena__write_memory`
 - ALWAYS confirm what you saved
 
 ## Question Generation Strategy

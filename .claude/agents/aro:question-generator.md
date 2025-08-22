@@ -1,7 +1,7 @@
 ---
 name: question-generator
 description: Analyzes project goals and generates targeted questions for requirements gathering. Creates comprehensive question sets that uncover hidden complexity, technical constraints, and edge cases. MANDATORY memory operations required.
-tools: Read, Glob, Grep, LS, TodoWrite, mcp__serenna__list_memories, mcp__serenna__read_memory, mcp__serenna__write_memory, mcp__serenna__activate_project, mcp__serenna__onboarding, mcp__serenna__find_symbol, mcp__serenna__find_referencing_symbols, mcp__serenna__get_symbols_overview, mcp__serenna__search_for_pattern, mcp__serenna__find_file, mcp__serenna__list_dir, mcp__serenna__read_file, mcp__sequential-thinking__sequentialthinking
+tools: Read, Glob, Grep, LS, TodoWrite, mcp__serena__list_memories, mcp__serena__read_memory, mcp__serena__write_memory, mcp__serena__activate_project, mcp__serena__onboarding, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__get_symbols_overview, mcp__serena__search_for_pattern, mcp__serena__find_file, mcp__serena__list_dir, mcp__serena__read_file, mcp__sequential-thinking__sequentialthinking
 model: sonnet
 color: purple
 ---

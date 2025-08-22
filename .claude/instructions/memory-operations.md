@@ -11,7 +11,7 @@
 ### Loading Memory Keys
 When your prompt contains **"MANDATORY: Load memory keys: [key1, key2]"**:
 
-1. **IMMEDIATELY** call `mcp__serenna__read_memory` for each key
+1. **IMMEDIATELY** call `mcp__serena__read_memory` for each key
 2. **CONFIRM** in your response: "MEMORY LOADED: key1 (brief description), key2 (brief description)"
 3. **USE** the loaded context to inform all subsequent work
 
@@ -29,7 +29,7 @@ MEMORY LOADED: project_goal (user wants Redis caching), user_clarifications (per
 When your prompt contains **"MANDATORY: Save to: output_key"**:
 
 1. **COMPLETE** your assigned task first
-2. **CALL** `mcp__serenna__write_memory(output_key, content, type)`
+2. **CALL** `mcp__serena__write_memory(output_key, content, type)`
 3. **CONFIRM** in response: "MEMORY CONFIRMATION: Saved to output_key"
 
 ### Memory Types for Saving
@@ -48,10 +48,10 @@ MANDATORY: Confirm all memory operations in your response
 ```
 
 You MUST:
-1. Load input_key1 and input_key2 using `mcp__serenna__read_memory`
+1. Load input_key1 and input_key2 using `mcp__serena__read_memory`
 2. Confirm what you loaded
 3. Execute your main task using the loaded context
-4. Save results using `mcp__serenna__write_memory(output_key, content, type)`
+4. Save results using `mcp__serena__write_memory(output_key, content, type)`
 5. Confirm what you saved
 
 ### Standard Memory Confirmation Format
