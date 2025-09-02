@@ -11,5 +11,5 @@ color: green
 **YOU MUST COMPLETE THIS BEFORE PROCEEDING:**
 
 1. **IMMEDIATELY load the agent instructions file:**
-   - Path: `$HOME/.claude/agents/agent-definition/aro:code-implementation.md`
+   - Path: `$HOME/.claude/agent-definition/aro:code-implementation.md`
    - Use the Read tool to load this file NOW

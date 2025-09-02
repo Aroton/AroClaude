@@ -15,5 +15,5 @@ color: purple
    - Use the Read tool to load this file NOW
 
 2. **IMMEDIATELY load the agent instructions file:**
-   - Path: `$HOME/.claude/agents/agent-definition/aro:plan-compiler.md`
+   - Path: `$HOME/.claude/agent-definition/aro:plan-compiler.md`
    - Use the Read tool to load this file NOW

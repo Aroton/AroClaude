@@ -15,5 +15,5 @@ color: yellow
    - Use the Read tool to load this file NOW
 
 2. **IMMEDIATELY load the agent instructions file:**
-   - Path: `$HOME/.claude/agents/agent-definition/aro:agent-sonnet.md`
+   - Path: `$HOME/.claude/agent-definition/aro:agent-sonnet.md`
    - Use the Read tool to load this file NOW

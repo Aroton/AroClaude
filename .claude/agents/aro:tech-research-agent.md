@@ -11,5 +11,5 @@ color: blue
 **YOU MUST COMPLETE THIS BEFORE PROCEEDING:**
 
 1. **IMMEDIATELY load the agent instructions file:**
-   - Path: `$HOME/.claude/agents/agent-definition/aro:tech-research-agent.md`
+   - Path: `$HOME/.claude/agent-definition/aro:tech-research-agent.md`
    - Use the Read tool to load this file NOW
